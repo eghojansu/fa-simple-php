@@ -1,0 +1,18 @@
+{
+	"name": "eghojansu/fa-simple-php",
+	"description": "Semi OOP PHP Framework",
+	"keywords": ["php","framework","procedural"],
+	"author": {
+		"name": "Eko Kurniawan",
+		"email": "ekokurniawanbs@gmail.com",
+		"role": "developer"
+	},
+	"type": "project",
+	"licence": "MIT",
+	"require": {
+		"php": ">=5.4"
+	},
+	"support": {
+		"email": "ekokurniawanbs@gmail.com"
+	}
+}

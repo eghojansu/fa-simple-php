@@ -1,0 +1,40 @@
+html {
+	font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+
+.container {
+	background: transparent;
+}
+
+.container-error {
+	max-width: 740px;
+	padding-top: 50px;
+}
+
+.container-login {
+	width: 300px;
+	margin: 100px auto;
+}
+
+.page-header {
+	margin-top: 0;
+}
+
+.fillbg {
+	z-index: -1;
+	position: fixed; 
+	top: -50%; 
+	left: -50%; 
+	width: 200%; 
+	height: 200%;
+}
+.fillbg img {
+	position: absolute; 
+	top: 0; 
+	left: 0; 
+	right: 0; 
+	bottom: 0; 
+	margin: auto; 
+	min-width: 50%;
+	min-height: 50%;
+}
