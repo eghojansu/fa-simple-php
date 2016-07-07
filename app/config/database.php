@@ -3,8 +3,10 @@
 return [
     // database
     'type' => 'mysql',
-    'host' => 'localhost',
-    'name' => 'project_indri_desa',
+    'dsn'  => [
+        'host' => 'localhost',
+        'dbname' => 'test_fasimplephp',
+    ],
     'username' => 'root',
     'password' => null,
 ];

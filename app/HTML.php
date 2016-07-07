@@ -21,6 +21,108 @@ NOTIFY
 : null;
     }
 
+    public function navbarNav(array $items, $currentPath = null, array $option = [])
+    {
+        $option = array_replace_recursive([
+            // ul class
+            'class' => 'nav navbar-nav',
+            // append ul class
+            'appendClass' => '',
+            // ul > li attr
+            'parentAttr' => [
+                'class' => 'dropdown',
+            ],
+            // ul > li > a attr
+            'parentItemAttr' => [
+                'class' => 'dropdown-toggle',
+                'data-toggle' => 'dropdown',
+                'role' => 'button',
+                'aria-haspopup' => 'true',
+                'aria-expanded' => 'false',
+            ],
+            // ul > li > ul attr
+            'childGroupAttr' => [
+                'class' => 'dropdown-menu',
+            ],
+            // ul > li > ul > li
+            'childAttr' => [
+            ],
+            // ul > li > ul > li > a
+            'childItemAttr' => [
+            ],
+        ], $option);
+
+        $str = '';
+        foreach ($items as $item) {
+            $item += [
+                'path' => null,
+                'label' => null,
+                'items' => [],
+            ];
+            $list = '';
+            $strChild = '';
+            $active = $currentPath === $item['path'];
+            $parentAttr = [];
+            $parentItemAttr = [];
+            $childGroupAttr = $option['childGroupAttr'];
+            $childAttr = $option['childAttr'];
+            $childItemAttr = $option['childItemAttr'];
+
+            if (count($item['items'])) {
+                $parentAttr += $option['parentAttr'];
+                $parentItemAttr += $option['parentItemAttr'];
+
+                $activeFromChild = false;
+                foreach ($item['items'] as $child) {
+                    $child += [
+                        'path' => null,
+                        'label' => null,
+                    ];
+                    $childActive = $currentPath === $child['path'];
+                    if (!$activeFromChild) {
+                        $activeFromChild = $childActive;
+                        $active = $activeFromChild;
+                    }
+                    $url = '#'===$child['path']?'#':App::$instance->url($child['path']);
+                    $strChild .= '<li'
+                              . $this->renderAttributes($childAttr, ['class'=>$childActive?'active':''])
+                              . '>'
+                              . '<a'
+                              . $this->renderAttributes(['href'=>$url]+$childItemAttr)
+                              . '>'
+                              . $child['label']
+                              . '</a>'
+                              . '</li>';
+                }
+                $strChild = '<ul'
+                          . $this->renderAttributes($childGroupAttr)
+                          . '>'
+                          . $strChild
+                          . '</ul>';
+                $item['label'] .= ' <span class="caret"></span>';
+            }
+
+            $url = '#'===$item['path']?'#':App::$instance->url($item['path']);
+            $str .= '<li'
+                 . $this->renderAttributes($parentAttr, ['class'=>$active?'active':''])
+                 . '>'
+                 . '<a'
+                 . $this->renderAttributes(['href'=>$url]+$parentItemAttr)
+                 . '>'
+                 . $item['label']
+                 . '</a>'
+                 . $strChild
+                 . '</li>';
+        }
+        $str = '<ul'
+             . $this->renderAttributes(['class'=>$option['class']], ['class'=>$option['appendClass']])
+             . '>'
+             . $str
+             . '</ul>';
+
+        return $str;
+    }
+
     /**
      * Generate pagination based on subset array
      * returned by Database::paginate
@@ -47,12 +149,10 @@ NOTIFY
             'params' => [],
             // index in route param
             'var' => 'page',
-            // inject page to GET global vars
-            'get' => true,
             // adjacents
             'adjacents' => 2,
             // ellipsis style
-            'ellipsisStyle' => 'color:white;cursor:default',
+            'ellipsisStyle' => 'cursor:default',
         ];
 
         extract($option);
@@ -109,8 +209,27 @@ NOTIFY
      */
     protected function paginationHref(array $option, $page)
     {
-        $params = [$option['var']=>$page];
+        $params = [$option['var']=>$page]+($_GET?:[]);
 
         return App::$instance->url($option['route'], $params);
+    }
+
+    protected function renderAttributes(array $attr, array $append = [])
+    {
+        foreach ($append as $key => $value) {
+            if (!$value) {
+                continue;
+            } elseif (isset($attr[$key])) {
+                $attr[$key] .= ' '.trim($value);
+            } else {
+                $attr[$key] = $value;
+            }
+        }
+        $str = '';
+        foreach ($attr as $key => $value) {
+            $str .= ' '.$key.(''===$value?'':'="'.$value.'"');
+        }
+
+        return $str;
     }
 }

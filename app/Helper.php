@@ -104,14 +104,13 @@ class Helper
     }
 
     /**
-     * Handle file upload, cnanot handle multiple files
+     * Handle file upload, cannot handle multiple files
      * @param  string $key          $_FILES[$key]
-     * @param  string $filename
-     * @param  string &$ext
+     * @param  string &$filename
      * @param  array  $allowedTypes
      * @return bool
      */
-    public static function handleImageUpload($key, $filename, &$ext = null, $allowedTypes = [])
+    public static function handleFileUpload($key, &$filename, $allowedTypes = [])
     {
         $result = false;
         $isArray = isset($_FILES[$key]) && is_array($_FILES[$key]['error']);
@@ -123,8 +122,8 @@ class Helper
         if (isset($_FILES[$key]) &&
             UPLOAD_ERR_OK === $_FILES[$key]['error'] &&
             ($allowedTypes && in_array($_FILES[$key]['type'], $allowedTypes))) {
-            $ext = strrchr($_FILES[$key]['name'], '.');
-            false !== strpos($filename, '.') || $filename .= $ext;
+            $ext = strtolower(strrchr($_FILES[$key]['name'], '.'));
+            $filename .= $ext;
             $result = move_uploaded_file($_FILES[$key]['tmp_name'], $filename);
         }
 

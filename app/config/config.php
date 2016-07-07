@@ -11,4 +11,9 @@ return [
     'template' => 'default',
     // session name
     'session' => 'ABCDEF',
+    // user level
+    'userLevel' => [
+        'user',
+        'admin',
+    ],
 ];

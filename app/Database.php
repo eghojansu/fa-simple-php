@@ -7,11 +7,11 @@
  */
 class Database
 {
-    protected $app;
     protected $config;
     protected $pdo;
     protected $errors = [];
     protected $logs = [];
+    protected $creating = false;
 
     /**
      * @param array $config = [
@@ -22,12 +22,11 @@ class Database
      *        ],
      *        'username'=>'username',
      *        'password'=>'password',
-     *        'options' => []
+     *        'options' => [],
      *    ]
      */
-    public function __construct(App $app, array $config)
+    public function __construct(array $config)
     {
-        $this->app    = $app;
         $this->config = array_replace_recursive([
             'type'     => 'mysql',
             'dsn' => [
@@ -41,17 +40,62 @@ class Database
     }
 
     /**
+     * Create the database
+     */
+    public function create()
+    {
+        $this->pdo = null;
+        $this->creating = true;
+        $this->pdo()->exec('create database if not exists '.$this->config['dsn']['dbname']);
+        $this->pdo->exec('use '.$this->config['dsn']['dbname']);
+        $this->creating = false;
+
+        return $this;
+    }
+
+    /**
+     * Drop database
+     */
+    public function drop()
+    {
+        $this->pdo = null;
+        $this->creating = true;
+        $this->pdo()->exec('drop database if exists '.$this->config['dsn']['dbname']);
+        $this->creating = false;
+        $this->pdo = null;
+
+        return $this;
+    }
+
+    /**
+     * Import sql file
+     * @param  string $file
+     */
+    public function import($file)
+    {
+        if ($sql = App::$instance->read($file)) {
+            $this->pdo()->exec($sql);
+        }
+
+        return $this;
+    }
+
+    /**
      * Get PDO connection
+     * @return PDO
      */
     public function pdo()
     {
         if (!$this->pdo) {
             // database configuration
             $db  = $this->config;
+            if ($this->creating) {
+                unset($db['dsn']['dbname']);
+            }
             // dsn
             $dsn = '';
             foreach ($db['dsn'] as $key => $value) {
-                $dsn .= ($dsn?';':'').$key.'='.$dbname;
+                $dsn .= ($dsn?';':'').$key.'='.$value;
             }
             $dsn = $db['type'].':'.$dsn;
             // construct PDO object
@@ -59,7 +103,7 @@ class Database
                 $this->pdo = new PDO($dsn, $db['username'], $db['password'], $db['options']);
             } catch (Exception $e) {
                 echo 'DB connection error!';
-                if ($this->app->get('debug')) {
+                if (App::$instance->get('debug')) {
                     echo PHP_EOL . $e->getMessage();
                 }
             }
@@ -90,14 +134,15 @@ class Database
      * @param  array   $criteria
      * @param  integer $page
      * @param  integer $limit
+     * @param  string  $options
      * @param  string  $column
      * @return array subset
      */
-    public function paginate($table, array $criteria = [], $page = 1, $limit = 20, $column = '*')
+    public function paginate($table, array $criteria = [], $options = '', $page = 1, $limit = 20, $column = '*')
     {
         $page = abs($page);
         $offset = $page * $limit - $limit;
-        $options = 'limit '.$limit.' offset '.$offset;
+        $options .= ' limit '.$limit.' offset '.$offset;
 
         $page = [
             'page' => $page,
@@ -108,8 +153,8 @@ class Database
             'total' => 1,
         ];
 
-        if (($page['count'] = count($page['data'])) === $limit) {
-            $count = $this->select('count(*) as count', $table, $criteria, '');
+        if (($page['count'] = count($page['data'])) > 0) {
+            $count = $this->select('count(*) as count', $table, $criteria);
             $page['total'] = (int) ceil($count[0]['count']/$limit);
         }
 
@@ -262,7 +307,7 @@ class Database
      */
     public function getLog($asString = true, $delimiter = PHP_EOL)
     {
-        return $asString?implode($delimiter, $this->$logs):$this->$logs;
+        return $asString?implode($delimiter, $this->logs):$this->logs;
     }
 
     /**
@@ -275,7 +320,7 @@ class Database
     {
         if ($asString) {
             $str = '';
-            foreach ($this->$errors as $error) {
+            foreach ($this->errors as $error) {
                 $str .= $delimiter.'('.$error[1].') '.$error[2];
             }
 
@@ -307,7 +352,7 @@ class Database
     public function dumpError($halt = false)
     {
         echo '<pre>';
-        var_dump($this->$errors);
+        var_dump($this->errors);
         echo '</pre>';
 
         if ($halt) {
@@ -343,7 +388,7 @@ class Database
      */
     protected function log($sql, array $params, array $error)
     {
-        if ($this->app->get('debug')) {
+        if (App::$instance->get('debug')) {
             $no = -1;
             $params = array_merge($params, []);
             $this->logs[] = preg_replace_callback('/(?<qm>\?)|(?<p>:\w+)/', function($match) use (&$no, $params) {

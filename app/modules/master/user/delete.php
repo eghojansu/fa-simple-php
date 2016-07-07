@@ -3,13 +3,11 @@
 $user = $app->service->get('user');
 $user->mustLogin()->orRedirect('index');
 
-$homeUrl = 'crud/sample';
+$homeUrl = 'master/user';
 $filter = [
-    'id_warga = ?',
+    'id = ?',
     $app->service->get('request')->query('id')
 ];
-/*
-$app->service->get('database')->delete('table', $filter);
-*/
+$app->service->get('database')->delete('user', $filter);
 $user->message('success', 'Data sudah dihapus!');
 $app->service->get('response')->redirect($homeUrl);

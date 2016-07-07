@@ -10,8 +10,6 @@ $password = $request->get('password');
 $error    = null;
 
 if ($request->isPost()) {
-  $data = ['username'=>$username,'nama'=>$username,'password'=>$password];
-  /*
   $db = $app->service->get('database');
   $filter = [
     'username = ? and password = ?',
@@ -19,12 +17,11 @@ if ($request->isPost()) {
     $password,
   ];
   $data = $db->findOne('user', $filter);
-  */
 
   if (empty($data)) {
-    $error = 'Login gagal! ';//.$db->getError();
+    $error = 'Login gagal! '.$db->getError();
   } else {
-    $user->login('user', $data);
+    $user->login($data['level'], $data);
     $app->service->get('response')->redirect('index');
   }
 }
@@ -49,7 +46,7 @@ if ($request->isPost()) {
   <body>
     <div class="fillbg"><img src="<?php echo $app->asset('public/images/bg.jpg'); ?>"></div>
     <div class="container-login">
-      <form method="post">
+      <form method="post" id="login-form">
         <h1 class="page-title">Login</h1>
         <?php if ($error): ?>
           <div class="alert alert-danger">

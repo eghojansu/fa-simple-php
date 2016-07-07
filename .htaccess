@@ -1,4 +1,8 @@
+# Change default directory default handler
 DirectoryIndex app.php
+
+# Prevent directory listing
+Options -Indexes
 
 # Enable rewrite engine and route requests to framework
 RewriteEngine On
@@ -9,7 +13,7 @@ RewriteEngine On
 #
 # RewriteBase /
 
-RewriteRule ^(app|lib|vendor)\/$ - [R=404]
+RewriteRule ^(app|dev|lib|vendor)\/$ - [R=404]
 
 RewriteCond %{REQUEST_FILENAME} !-l
 RewriteCond %{REQUEST_FILENAME} !-f

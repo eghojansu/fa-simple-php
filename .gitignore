@@ -1,2 +1,6 @@
+dev/*
 public/uploads/*
+public/avatars/*
+vendor/
+*.lock
 !.gitkeep

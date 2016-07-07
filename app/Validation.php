@@ -8,6 +8,16 @@ class Validation
     protected $error;
     protected $messages = [];
 
+    /**
+     * @param array $data  data to validate
+     * @param array $rules
+     *        $rules = [
+     *            'data' => 'required',
+     *            // same field can use - (hypen) as prefix (this is tricky way)
+     *            '-data' => 'equal(otherfieldvalue)',
+     *        ]
+     * @param array $skips [description]
+     */
     public function __construct(array $data, array $rules, array $skips = [])
     {
         $this->data = $data;
@@ -21,6 +31,7 @@ class Validation
             'min' => '{field} minimal {param}',
             'max' => '{field} maksimal {param}',
             'equal' => '{field} tidak sama dengan {param}',
+            'unique' => '{field} {param} tidak tersedia!',
         ];
     }
 
@@ -80,7 +91,7 @@ class Validation
     public function validate()
     {
         foreach ($this->rules as $fields => $rule) {
-            $fields = array_filter(explode(',', str_replace(' ', '', $fields)));
+            $fields = array_filter(explode(',', str_replace(' ', '', ltrim($fields, '-'))));
             $rule = $this->extractRule($rule);
             $message = empty($rule['message'])?null:$rule['message'];
             $param = empty($rule['param'])?null:$rule['param'];
@@ -110,12 +121,21 @@ class Validation
 
     public function setError($field, $value, $message, $params, $rule)
     {
-        $params = preg_replace('/(,allowEmpty)/', '', $params);
-        $message = str_replace(['{field}','{value}','{param}'], [
-            ucwords(preg_replace('/_(\w)/', ' \\1', $field)),
-            $value,
-            $params
-            ], $message?:$this->messages[$rule]);
+        $params = preg_replace('/,allowEmpty$/', '', $params);
+        $replace = [
+            '{field}' => ucwords(preg_replace('/_(\w)/', ' \\1', $field)),
+            '{value}' => $value,
+            '{param}' => $params,
+            ];
+        if ('match' !== $rule) {
+            foreach (explode(',', $params) as $key => $param) {
+                $replace['{param_'.$key.'}'] = $param;
+            }
+        }
+        $message = str_replace(
+            array_keys($replace),
+            array_values($replace),
+            $message?:$this->messages[$rule]);
         $this->error = $message;
 
         return $this;
@@ -148,13 +168,10 @@ class Validation
 
     protected function allowEmpty(&$param, $value)
     {
-        $xtmp = explode(',', $param);
-        $param = $xtmp[0];
+        $new_param = preg_replace('/,allowEmpty$/', '', $param);
+        $result = (($param !== $new_param) && '' === $value);
+        $param = $new_param;
 
-        if (isset($xtmp[1]) && 'allowEmpty'===$xtmp[1] && ''===$value) {
-            return true;
-        }
-
-        return false;
+        return $result;
     }
 }

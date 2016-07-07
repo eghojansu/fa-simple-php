@@ -3,26 +3,19 @@
 $user = $app->service->get('user');
 $user->mustLogin()->orRedirect('index');
 
-$homeUrl = 'crud/sample';
+$homeUrl = 'master/user';
 $filter = [
-    'id_warga = ?',
+    'id = ?',
     $app->service->get('request')->query('id')
 ];
-$record = [
-    'columna'=>'Value A',
-    'columnb'=>'Value B',
-    'columnc'=>'Value C',
-];
-/*
-$record = Database::findOne('table', $filter);
-*/
+$record = $app->service->get('database')->findOne('user', $filter);
 if (empty($record)) {
     $user->message('error', 'Data tidak ditemukan');
     $app->service->get('response')->redirect($homeUrl);
 }
 ?>
 <h1 class="page-header">
-    Data Sample
+    Data User
     <small>detail</small>
 </h1>
 
@@ -32,19 +25,19 @@ if (empty($record)) {
             <td colspan="3"><a href="<?php echo $app->url($homeUrl); ?>" data-toggle="tooltip" title="Kembali">&laquo;</a></td>
         </tr>
         <tr>
-            <td style="width: 200px">Column A</td>
+            <td style="width: 200px">Name</td>
             <td style="width: 30px">:</td>
-            <td><?php echo $record['columna']; ?></td>
+            <td><?php echo $record['name']; ?></td>
         </tr>
         <tr>
-            <td>Column B</td>
+            <td>Username</td>
             <td>:</td>
-            <td><?php echo $record['columb']; ?></td>
+            <td><?php echo $record['username']; ?></td>
         </tr>
         <tr>
-            <td>Column C</td>
+            <td>Level</td>
             <td>:</td>
-            <td><?php echo $record['columc']; ?></td>
+            <td><?php echo $record['level']; ?></td>
         </tr>
     </tbody>
 </table>

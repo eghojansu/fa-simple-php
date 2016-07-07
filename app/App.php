@@ -86,17 +86,39 @@ class App
     }
 
     /**
+     * Read file
+     * @param  string $file
+     * @return string
+     */
+    public function read($file)
+    {
+        return @file_get_contents($file)?:null;
+    }
+
+    /**
+     * Write to file
+     * @param  string $file
+     * @param  string $content
+     * @param  boolean $append
+     */
+    public function write($file, $content, $append = false)
+    {
+        return @file_put_contents($file, $content, $append?FILE_APPEND:0);
+    }
+
+    /**
      * Load array variabel from file
+     * @return  array
      */
     public function load($file)
     {
         if (is_readable($file)) {
             $data = require($file);
 
-            $this->register(is_array($data)?$data:[]);
+            return $data ?: [];
         }
 
-        return $this;
+        return [];
     }
 
     /**
