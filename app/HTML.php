@@ -21,6 +21,26 @@ NOTIFY
 : null;
     }
 
+    /**
+     * Construct ul bootstrap navbar structure
+     * Only support 2-level list
+     * @param  array  $items
+     *         [
+     *             'path'=>'path',
+     *             'label'=>'Path',
+     *             'roles'=>[],
+     *             'items'=>[
+     *                 [
+     *                     'path'=>'path',
+     *                     'label'=>'Path',
+     *                     'roles'=>[],
+     *                 ]
+     *             ],
+     *         ]
+     * @param  string $currentPath
+     * @param  array  $option @see source
+     * @return string
+     */
     public function navbarNav(array $items, $currentPath = null, array $option = [])
     {
         $option = array_replace_recursive([
@@ -52,13 +72,18 @@ NOTIFY
             ],
         ], $option);
 
+        $role = App::$instance->service->get('user')->get('role');
         $str = '';
         foreach ($items as $item) {
             $item += [
                 'path' => null,
                 'label' => null,
                 'items' => [],
+                'roles' => [],
             ];
+            if ($item['roles'] && !in_array($role, $item['roles'])) {
+                continue;
+            }
             $list = '';
             $strChild = '';
             $active = $currentPath === $item['path'];
@@ -67,17 +92,22 @@ NOTIFY
             $childGroupAttr = $option['childGroupAttr'];
             $childAttr = $option['childAttr'];
             $childItemAttr = $option['childItemAttr'];
+            $childCounter = 0;
 
             if (count($item['items'])) {
-                $parentAttr += $option['parentAttr'];
-                $parentItemAttr += $option['parentItemAttr'];
-
                 $activeFromChild = false;
                 foreach ($item['items'] as $child) {
                     $child += [
                         'path' => null,
                         'label' => null,
+                        'roles' => [],
                     ];
+
+                    if ($child['roles'] && !in_array($role, $child['roles'])) {
+                        continue;
+                    }
+
+                    $childCounter++;
                     $childActive = $currentPath === $child['path'];
                     if (!$activeFromChild) {
                         $activeFromChild = $childActive;
@@ -94,14 +124,23 @@ NOTIFY
                               . '</a>'
                               . '</li>';
                 }
-                $strChild = '<ul'
-                          . $this->renderAttributes($childGroupAttr)
-                          . '>'
-                          . $strChild
-                          . '</ul>';
-                $item['label'] .= ' <span class="caret"></span>';
+                if ($childCounter) {
+                    $parentAttr += $option['parentAttr'];
+                    $parentItemAttr += $option['parentItemAttr'];
+                    $strChild = '<ul'
+                              . $this->renderAttributes($childGroupAttr)
+                              . '>'
+                              . $strChild
+                              . '</ul>';
+                    $item['label'] .= ' <span class="caret"></span>';
+                } else {
+                  $strChild = '';
+                }
             }
 
+            if (count($item['items']) && 0 === $childCounter) {
+                continue;
+            }
             $url = '#'===$item['path']?'#':App::$instance->url($item['path']);
             $str .= '<li'
                  . $this->renderAttributes($parentAttr, ['class'=>$active?'active':''])

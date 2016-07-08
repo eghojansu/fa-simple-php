@@ -48,7 +48,6 @@ class Database
         $this->creating = true;
         $this->pdo()->exec('create database if not exists '.$this->config['dsn']['dbname']);
         $this->pdo->exec('use '.$this->config['dsn']['dbname']);
-        $this->creating = false;
 
         return $this;
     }
@@ -61,7 +60,6 @@ class Database
         $this->pdo = null;
         $this->creating = true;
         $this->pdo()->exec('drop database if exists '.$this->config['dsn']['dbname']);
-        $this->creating = false;
         $this->pdo = null;
 
         return $this;
@@ -91,6 +89,7 @@ class Database
             $db  = $this->config;
             if ($this->creating) {
                 unset($db['dsn']['dbname']);
+                $this->creating = false;
             }
             // dsn
             $dsn = '';
@@ -129,6 +128,20 @@ class Database
     }
 
     /**
+     * Count table records
+     * @param  string $table
+     * @param  array  $criteria
+     * @param  string $options
+     * @return int
+     */
+    public function count($table, array $criteria = [], $options = '')
+    {
+        $record = $this->select('count(*) as count', $table, $criteria, $options);
+
+        return $record?$record[0]['count']:0;
+    }
+
+    /**
      * Paginate table
      * @param  string  $table
      * @param  array   $criteria
@@ -154,8 +167,7 @@ class Database
         ];
 
         if (($page['count'] = count($page['data'])) > 0) {
-            $count = $this->select('count(*) as count', $table, $criteria);
-            $page['total'] = (int) ceil($count[0]['count']/$limit);
+            $page['total'] = (int) ceil($this->count($table, $criteria)/$limit);
         }
 
         return $page;
@@ -300,12 +312,33 @@ class Database
     }
 
     /**
+     * Populate record and transform to key=value pair array
+     * @param  string $table
+     * @param  string $key      column name as key
+     * @param  string|callable $value    column name as value
+     * @param  array  $criteria
+     * @param  string $options
+     * @return array
+     */
+    public function populate($table, $key, $value, array $criteria = [], $options = '')
+    {
+        $data = [];
+        $records = $this->find($table, $criteria, $options);
+        foreach ($records as $record) {
+            $data[$record[$key]] = is_string($value)?
+                $record[$value]:call_user_func_array($value, [$record]);
+        }
+
+        return $data;
+    }
+
+    /**
      * Get log
      * @param  boolean $asString
      * @param  string  $delimiter
      * @return string|array
      */
-    public function getLog($asString = true, $delimiter = PHP_EOL)
+    public function getLog($asString = true, $delimiter = '<br>')
     {
         return $asString?implode($delimiter, $this->logs):$this->logs;
     }
@@ -316,7 +349,7 @@ class Database
      * @param  string  $delimiter
      * @return string|array
      */
-    public function getError($asString = true, $delimiter = PHP_EOL)
+    public function getError($asString = true, $delimiter = '<br>')
     {
         if ($asString) {
             $str = '';
@@ -358,26 +391,6 @@ class Database
         if ($halt) {
             die;
         }
-    }
-
-    /**
-     * Populate record and transform to key=value pair array
-     * @param  string $table
-     * @param  string $key      column name as key
-     * @param  string $value    column name as value
-     * @param  array  $criteria
-     * @param  string $options
-     * @return array
-     */
-    public function populate($table, $key, $value, array $criteria = [], $options = '')
-    {
-        $data = [];
-        $records = $this->find($table, $criteria, $options);
-        foreach ($records as $record) {
-            $data[$record[$key]] = $record[$value];
-        }
-
-        return $data;
     }
 
     /**

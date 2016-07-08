@@ -1,6 +1,6 @@
 <?php
 
-// load main class
+// autoloader class
 require 'app/autoload.php';
 
 // instantiate main class
@@ -47,7 +47,9 @@ $template_path = __DIR__.'/app/template/';
 $extension     = '.php';
 // current path
 $current_path  = str_replace($extension, '', $app->service->get('request')->currentPath());
-// path to load
+// path to load, if current path exists use it otherwise use default (index page)
+// then, if that path exists assume that path should be served with index page
+// otherwise use plain path and concat with extension
 $path          = $module_path.($current_path?:'index');
 $path          = (file_exists($path)?$path.'/index':$path).$extension;
 // not found file

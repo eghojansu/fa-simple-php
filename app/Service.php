@@ -2,8 +2,8 @@
 
 /**
  * Taken from github.com/level-2/dice
- * Change create method to get
- * Rules format not changed
+ * Change create method to get method
+ * Rules format not changed at all
  */
 /* @description Dice - A minimal Dependency Injection Container for PHP *
  * @author Tom Butler tom@r.je *

@@ -15,6 +15,15 @@ $account_nav = $html->navbarNav($nav['account'], $currentPath, ['appendClass'=>'
     <link href="<?php echo $app->asset('public/css/bootstrap.united-theme.min.css'); ?>" rel="stylesheet">
     <link href="<?php echo $app->asset('public/css/bootstrap-datepicker3.min.css'); ?>" rel="stylesheet">
     <link href="<?php echo $app->asset('public/css/style.css'); ?>" rel="stylesheet">
+
+    <script src="<?php echo $app->asset('public/js/jquery.min.js'); ?>"></script>
+    <script src="<?php echo $app->asset('public/js/bootstrap.min.js'); ?>"></script>
+    <script src="<?php echo $app->asset('public/js/bootstrap-datepicker.min.js'); ?>"></script>
+    <script src="<?php echo $app->asset('public/js/bootstrap-datepicker.id.min.js'); ?>"></script>
+    <script src="<?php echo $app->asset('public/js/notify.min.js'); ?>"></script>
+    <script src="<?php echo $app->asset('public/js/bootbox.min.js'); ?>"></script>
+    <script src="<?php echo $app->asset('public/js/autonumeric.js'); ?>"></script>
+    <script src="<?php echo $app->asset('public/js/script.js'); ?>"></script>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -45,13 +54,5 @@ $account_nav = $html->navbarNav($nav['account'], $currentPath, ['appendClass'=>'
     <div class="container">
       <?php echo $app->get('content'); ?>
     </div>
-
-    <script src="<?php echo $app->asset('public/js/jquery.min.js'); ?>"></script>
-    <script src="<?php echo $app->asset('public/js/bootstrap.min.js'); ?>"></script>
-    <script src="<?php echo $app->asset('public/js/bootstrap-datepicker.min.js'); ?>"></script>
-    <script src="<?php echo $app->asset('public/js/bootstrap-datepicker.id.min.js'); ?>"></script>
-    <script src="<?php echo $app->asset('public/js/notify.min.js'); ?>"></script>
-    <script src="<?php echo $app->asset('public/js/bootbox.min.js'); ?>"></script>
-    <script src="<?php echo $app->asset('public/js/script.js'); ?>"></script>
   </body>
 </html>

@@ -6,6 +6,10 @@ $(document).ready(function() {
 		var message = $.trim($(this).html());
 		$.notify(message, opt);
 	});
+    $('[data-transform="autonumeric"]').autoNumeric('init', {
+        aSep: '.',
+        aDec: ','
+    });
 	$('[data-toggle=tooltip]').tooltip();
 	$('[data-toggle=datepicker]').datepicker({
 		format: 'yyyy-mm-dd'

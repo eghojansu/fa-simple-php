@@ -5,12 +5,56 @@
  */
 class Helper
 {
-    protected static $days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-    protected static $months = [1=>'Januari','Februari','Maret','April','Mei',
+    public static $days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+    public static $months = [1=>'Januari','Februari','Maret','April','Mei',
         'Juni','Juli','Agustus','September','Oktober','November','Desember'
     ];
-    protected static $roman = [1=>'I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
+    public static $roman = [1=>'I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
 
+    /**
+     * Number format wrapper
+     * @param  number $no
+     * @return string
+     */
+    public static function number($no)
+    {
+        return number_format($no, 2, ',', '.');
+    }
+
+    /**
+     * Normalize number to save in db
+     * @param  number $no
+     * @return string
+     */
+    public static function normalizeNumber($no)
+    {
+        return false === strpos($no, ',') ? $no :
+            str_replace(['.',','], ['','.'], $no);
+    }
+
+    /**
+     * Get month name
+     * @param  int $no
+     * @return string
+     */
+    public static function monthName($no)
+    {
+        $no *= 1;
+
+        return isset(self::$months[$no])?self::$months[$no]:null;
+    }
+
+    /**
+     * Get day name
+     * @param  int $no
+     * @return string
+     */
+    public static function dayName($no)
+    {
+        $no *= 1;
+
+        return isset(self::$days[$no])?self::$days[$no]:null;
+    }
 
     /**
      * Fix slashes

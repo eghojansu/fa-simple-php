@@ -3,7 +3,7 @@
 /**
  * Main application class
  *
- * Memudahkan akses ke global variabel
+ * Simplify access to global vars,
  */
 class App
 {
@@ -54,21 +54,7 @@ class App
     }
 
     /**
-     * Register services
-     * @param  array  $rules
-     * @see  Level-2/Dice
-     */
-    public function registerServices(array $rules)
-    {
-        foreach ($rules as $key => $value) {
-            $this->service->addRule($key, $value);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Aktifkan debug
+     * Activate debug mode
      */
     public function debug()
     {
@@ -81,6 +67,20 @@ class App
     public function register(array $data)
     {
         $this->data = array_replace_recursive($this->data, $data);
+
+        return $this;
+    }
+
+    /**
+     * Register services
+     * @param  array  $rules
+     * @see  Level-2/Dice
+     */
+    public function registerServices(array $rules)
+    {
+        foreach ($rules as $key => $value) {
+            $this->service->addRule($key, $value);
+        }
 
         return $this;
     }

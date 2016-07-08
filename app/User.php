@@ -210,7 +210,15 @@ class User
      */
     public function must($role)
     {
-        $this->redirectOK = $this->is('role', $role);
+        $ok = false;
+        if (is_array($role)) {
+            foreach ($role as $r) {
+                $ok |= $this->is('role', $r);
+            }
+        } else {
+            $ok = $this->is('role', $role);
+        }
+        $this->redirectOK = !$ok;
 
         return $this;
     }

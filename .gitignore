@@ -3,4 +3,5 @@ public/uploads/*
 public/avatars/*
 vendor/
 *.lock
+*.bak
 !.gitkeep

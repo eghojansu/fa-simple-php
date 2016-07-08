@@ -8,4 +8,8 @@ return [
         'constructParams'=>[$database],
         'shared'=>true,
     ],
+    'model' => [
+        'instanceOf'=>'Model',
+        'shared'=>true,
+    ],
 ];
