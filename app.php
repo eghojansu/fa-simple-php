@@ -18,9 +18,9 @@ $config = $app->load('app/config/services.php');
 $app->registerServices($config);
 
 // database manipulation
-$user = $app->service->get('user');
+$user = $app->service('user');
 if (!$user->exists('db_created')) {
-    $db = $app->service->get('database');
+    $db = $app->service('database');
     $db
         ->drop()
         ->create()
@@ -46,7 +46,7 @@ $template_path = __DIR__.'/app/template/';
 // extension
 $extension     = '.php';
 // current path
-$current_path  = str_replace($extension, '', $app->service->get('request')->currentPath());
+$current_path  = str_replace($extension, '', $app->service('request')->currentPath());
 // path to load, if current path exists use it otherwise use default (index page)
 // then, if that path exists assume that path should be served with index page
 // otherwise use plain path and concat with extension
@@ -75,7 +75,7 @@ if ($template = $app->get('template')) {
 }
 
 // set content respond then send
-$app->service->get('response')
+$app->service('response')
     ->setContent($app->cut('content'))
     ->send()
 ;

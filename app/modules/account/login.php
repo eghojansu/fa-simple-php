@@ -1,16 +1,16 @@
 <?php
 
-$user = $app->service->get('user');
+$user = $app->service('user');
 $user->mustAnonym()->orRedirect('index');
 $app->clear('template');
 
-$request  = $app->service->get('request');
+$request  = $app->service('request');
 $username = $request->get('username');
 $password = $request->get('password');
 $error    = null;
 
 if ($request->isPost()) {
-  $db = $app->service->get('database');
+  $db = $app->service('database');
   $filter = [
     'username = ? and password = ?',
     $username,
@@ -22,7 +22,7 @@ if ($request->isPost()) {
     $error = 'Login gagal! '.$db->getError();
   } else {
     $user->login($data['level'], $data);
-    $app->service->get('response')->redirect('index');
+    $app->service('response')->redirect('index');
   }
 }
 ?>

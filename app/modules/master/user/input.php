@@ -1,9 +1,9 @@
 <?php
 
-$user = $app->service->get('user');
+$user = $app->service('user');
 $user->mustLogin()->orRedirect('index');
 
-$request = $app->service->get('request');
+$request = $app->service('request');
 $homeUrl = 'master/user';
 $fields = [
     'name'=>$request->get('name'),
@@ -16,7 +16,7 @@ $filter = [
     'id = ?',
     $request->query('id')
 ];
-$db = $app->service->get('database');
+$db = $app->service('database');
 $record = $db->findOne('user', $filter);
 $found = !empty($record);
 $record += $fields;
@@ -25,7 +25,7 @@ if ($request->isPost()) {
     $rules = [
         'name,username,password'=>'required',
     ];
-    $error = $app->service->get('validation', [$fields, $rules])->validate()->getError();
+    $error = $app->service('validation', [$fields, $rules])->validate()->getError();
 
     if (!$error) {
         $saved = $found?
@@ -35,7 +35,7 @@ if ($request->isPost()) {
             $db->insert('user', $fields);
         if ($saved) {
             $user->message('success', 'Data sudah disimpan!');
-            $app->service->get('response')->redirect($homeUrl);
+            $app->service('response')->redirect($homeUrl);
         }
          else {
             $error = 'Data gagal disimpan!'.$db->getError();
@@ -43,7 +43,7 @@ if ($request->isPost()) {
     }
 }
 
-$html = $app->service->get('html');
+$html = $app->service('html');
 echo $html->notify('error', $error);
 ?>
 <h1 class="page-header">

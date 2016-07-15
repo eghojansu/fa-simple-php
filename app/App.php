@@ -54,6 +54,19 @@ class App
     }
 
     /**
+     * Get service instance
+     * @return mixed
+     */
+    public function service()
+    {
+        if ($args = func_get_args()) {
+            return call_user_func_array([$this->service, 'get'], $args);
+        }
+
+        return $this->service;
+    }
+
+    /**
      * Activate debug mode
      */
     public function debug()

@@ -1,4 +1,4 @@
 <?php
 
-$app->service->get('user')->logout();
-$app->service->get('response')->redirect('account/login');
+$app->service('user')->logout();
+$app->service('response')->redirect('account/login');

@@ -1,9 +1,9 @@
 <?php
 
-$user = $app->service->get('user');
+$user = $app->service('user');
 $user->mustLogin()->orRedirect('index');
 
-$request      = $app->service->get('request');
+$request      = $app->service('request');
 $username     = $request->get('username', $user->get('username'));
 $password     = $request->get('password', $user->get('password'));
 $new_password = $request->get('new_password');
@@ -24,7 +24,7 @@ if ($request->isPost()) {
     '-password'=>"equal($old_password),Password saat ini tidak valid",
     'new_password'=>'minLength(4,allowEmpty)',
   ];
-  $error = $app->service->get('validation', [$data, $rules])->validate()->getError();
+  $error = $app->service('validation', [$data, $rules])->validate()->getError();
   unset($data['new_password']);
   if ($new_password) {
     $data['password'] = $new_password;
@@ -36,7 +36,7 @@ if ($request->isPost()) {
   }
 
   if (!$error) {
-    $db = $app->service->get('database');
+    $db = $app->service('database');
     $filter = [
       'id = ?',
       $user->get('id'),
@@ -45,7 +45,7 @@ if ($request->isPost()) {
     if ($saved) {
       $user->register($data);
       $user->message('success', 'Data sudah diupdate');
-      $app->service->get('response')->redirect('account/profil');
+      $app->service('response')->redirect('account/profil');
     }
     else {
       $error = 'Data gagal disimpan!'.$db->getError();
@@ -56,7 +56,7 @@ if ($request->isPost()) {
 $avatar = $user->get('avatar');
 $avatar = $app->asset($avatar?'public/avatars/'.$avatar:'public/images/avatar.png');
 
-$html = $app->service->get('html');
+$html = $app->service('html');
 echo $html->notify('error', $error);
 echo $html->notify('success', $user->message('success'));
 ?>

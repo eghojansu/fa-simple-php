@@ -1,17 +1,17 @@
 <?php
 
-$user = $app->service->get('user');
+$user = $app->service('user');
 $user->mustLogin()->orRedirect('index');
 
 $homeUrl = 'master/user';
 $filter = [
     'id = ?',
-    $app->service->get('request')->query('id')
+    $app->service('request')->query('id')
 ];
-$record = $app->service->get('database')->findOne('user', $filter);
+$record = $app->service('database')->findOne('user', $filter);
 if (empty($record)) {
     $user->message('error', 'Data tidak ditemukan');
-    $app->service->get('response')->redirect($homeUrl);
+    $app->service('response')->redirect($homeUrl);
 }
 ?>
 <h1 class="page-header">

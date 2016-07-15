@@ -1,6 +1,6 @@
 <?php
 
-$user = $app->service->get('user');
+$user = $app->service('user');
 $user->mustLogin()->orRedirect('account/login');
 
 ?>

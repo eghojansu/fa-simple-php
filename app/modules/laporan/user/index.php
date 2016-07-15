@@ -1,9 +1,9 @@
 <?php
 
-$user = $app->service->get('user');
+$user = $app->service('user');
 $user->mustLogin()->orRedirect('index');
 
-$request = $app->service->get('request');
+$request = $app->service('request');
 $filter = [];
 if ($keyword = $request->query('keyword')) {
     $filter = [
@@ -12,13 +12,13 @@ if ($keyword = $request->query('keyword')) {
     ];
 }
 $page = $request->query('page', 1);
-$subset = $app->service->get('database')->paginate('user', $filter, null, $page);
+$subset = $app->service('database')->paginate('user', $filter, null, $page);
 
 $selfUrl = 'laporan/user';
 $printUrl = 'laporan/user/print';
 $downloadUrl = 'laporan/user/download';
 
-$html = $app->service->get('html');
+$html = $app->service('html');
 echo $html->notify('success', $user->message('success'));
 echo $html->notify('error', $user->message('error'));
 ?>

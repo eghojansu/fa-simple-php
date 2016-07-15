@@ -1,9 +1,9 @@
 <?php
 
-$user = $app->service->get('user');
+$user = $app->service('user');
 $user->mustLogin()->orRedirect('index');
 
-$request = $app->service->get('request');
+$request = $app->service('request');
 $filter = [];
 if ($keyword = $request->query('keyword')) {
     $filter = [
@@ -11,7 +11,7 @@ if ($keyword = $request->query('keyword')) {
         ':keyword' => '%'.$keyword.'%'
     ];
 }
-$data = $app->service->get('database')->find('user', $filter);
+$data = $app->service('database')->find('user', $filter);
 
 $parentUrl = 'laporan/user';
 ?>
