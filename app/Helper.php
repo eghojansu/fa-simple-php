@@ -67,6 +67,21 @@ class Helper
     }
 
     /**
+     * Ensure path is absolute
+     * @param  string $path
+     * @return string
+     */
+    public static function ensureAbsolute($path)
+    {
+        $x = explode('/', self::fixSlashes($path, false));
+        $path = implode('/', array_filter($x, function($x) {
+            return !empty(trim($x, '.'));
+        }));
+
+        return $path;
+    }
+
+    /**
      * Dump variable
      * @param  mixed  $data
      * @param  boolean $halt

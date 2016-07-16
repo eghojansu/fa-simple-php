@@ -47,6 +47,8 @@ $template_path = __DIR__.'/app/template/';
 $extension     = '.php';
 // current path
 $current_path  = str_replace($extension, '', $app->service('request')->currentPath());
+// ensure this is absolute path
+$current_path  = Helper::ensureAbsolute($current_path);
 // path to load, if current path exists use it otherwise use default (index page)
 // then, if that path exists assume that path should be served with index page
 // otherwise use plain path and concat with extension
