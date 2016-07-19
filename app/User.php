@@ -11,7 +11,7 @@ class User
     public function __construct()
     {
         @session_start();
-        $key = App::$instance->get('session');
+        $key = App::instance()->get('session');
         if (empty($_SESSION[$key])) {
             $_SESSION[$key] = [];
         }
@@ -230,7 +230,7 @@ class User
     public function orRedirect()
     {
         if ($this->redirectOK) {
-            call_user_func_array([App::$instance->service->get('response'),'redirect'], func_get_args());
+            call_user_func_array([App::instance()->service->get('response'),'redirect'], func_get_args());
         }
 
         return $this;

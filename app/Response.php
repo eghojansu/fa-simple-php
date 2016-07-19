@@ -46,7 +46,7 @@ class Response
      */
     public function redirect($path = null, array $param = [])
     {
-        $this->addHeader('location', App::$instance->url($path, $param));
+        $this->addHeader('location', App::instance()->url($path, $param));
         $this->sendHeader();
         exit;
     }
@@ -97,13 +97,13 @@ class Response
     {
         $content = $this->getContent();
         $this->clearContent();
-        if (!App::$instance->get('headerOff')) {
+        if (!App::instance()->get('headerOff')) {
             $this->sendHeader();
         }
-        if (!App::$instance->get('quiet')) {
+        if (!App::instance()->get('quiet')) {
             echo $content;
 
-            if (App::$instance->get('halt')) {
+            if (App::instance()->get('halt')) {
                 die;
             }
         }

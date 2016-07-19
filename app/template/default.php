@@ -41,7 +41,7 @@ $account_nav = $html->navbarNav($nav['account'], $currentPath, ['appendClass'=>'
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="index.php"><?php echo $app->get('alias'); ?></a>
+          <a class="navbar-brand" href="<?php echo $app->url(); ?>"><?php echo $app->get('alias'); ?></a>
         </div>
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">

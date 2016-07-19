@@ -71,7 +71,7 @@ class Database
      */
     public function import($file)
     {
-        if ($sql = App::$instance->read($file)) {
+        if ($sql = App::instance()->read($file)) {
             $this->pdo()->exec($sql);
         }
 
@@ -102,7 +102,7 @@ class Database
                 $this->pdo = new PDO($dsn, $db['username'], $db['password'], $db['options']);
             } catch (Exception $e) {
                 echo 'DB connection error!';
-                if (App::$instance->get('debug')) {
+                if (App::instance()->get('debug')) {
                     echo PHP_EOL . $e->getMessage();
                 }
             }
@@ -401,7 +401,7 @@ class Database
      */
     protected function log($sql, array $params, array $error)
     {
-        if (App::$instance->get('debug')) {
+        if (App::instance()->get('debug')) {
             $no = -1;
             $params = array_merge($params, []);
             $this->logs[] = preg_replace_callback('/(?<qm>\?)|(?<p>:\w+)/', function($match) use (&$no, $params) {

@@ -22,6 +22,23 @@ NOTIFY
     }
 
     /**
+     * Bootstrap alert
+     * @param  string $type    
+     * @param  string $message 
+     * @return string          
+     */
+    public function alert($type, $message)
+    {
+        return $message?<<<NOTIFY
+<div class="alert alert-$type alert-dismissible" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <strong>$type!</strong> $message
+</div>
+NOTIFY
+: null;
+    }
+
+    /**
      * Construct ul bootstrap navbar structure
      * Only support 2-level list
      * @param  array  $items
@@ -70,9 +87,10 @@ NOTIFY
             // ul > li > ul > li > a
             'childItemAttr' => [
             ],
+            'useCaret'=>true,
         ], $option);
 
-        $role = App::$instance->service->get('user')->get('role');
+        $role = App::instance()->service->get('user')->get('role');
         $str = '';
         foreach ($items as $item) {
             $item += [
@@ -113,7 +131,7 @@ NOTIFY
                         $activeFromChild = $childActive;
                         $active = $activeFromChild;
                     }
-                    $url = '#'===$child['path']?'#':App::$instance->url($child['path']);
+                    $url = '#'===$child['path']?'#':App::instance()->url($child['path']);
                     $strChild .= '<li'
                               . $this->renderAttributes($childAttr, ['class'=>$childActive?'active':''])
                               . '>'
@@ -132,7 +150,9 @@ NOTIFY
                               . '>'
                               . $strChild
                               . '</ul>';
-                    $item['label'] .= ' <span class="caret"></span>';
+                    if ($option['useCaret']) {
+                        $item['label'] .= ' <span class="caret"></span>';
+                    }
                 } else {
                   $strChild = '';
                 }
@@ -141,7 +161,7 @@ NOTIFY
             if (count($item['items']) && 0 === $childCounter) {
                 continue;
             }
-            $url = '#'===$item['path']?'#':App::$instance->url($item['path']);
+            $url = '#'===$item['path']?'#':App::instance()->url($item['path']);
             $str .= '<li'
                  . $this->renderAttributes($parentAttr, ['class'=>$active?'active':''])
                  . '>'
@@ -250,7 +270,7 @@ NOTIFY
     {
         $params = [$option['var']=>$page]+($_GET?:[]);
 
-        return App::$instance->url($option['route'], $params);
+        return App::instance()->url($option['route'], $params);
     }
 
     protected function renderAttributes(array $attr, array $append = [])

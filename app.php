@@ -4,7 +4,7 @@
 require 'app/autoload.php';
 
 // instantiate main class
-$app = new App;
+$app = App::instance();
 
 // set base path
 $app->set('base', realpath(__DIR__).'/');

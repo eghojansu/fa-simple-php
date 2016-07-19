@@ -39,7 +39,7 @@ class App
     ];
     protected $assetRoot;
     public    $service;
-    public static $instance;
+    private static $instance;
 
 
     /**
@@ -50,7 +50,18 @@ class App
     {
         $this->service = new Service;
         $this->registerServices($this->rules);
-        self::$instance = $this;
+    }
+
+    /**
+     * Get instance
+     */
+    public function instance()
+    {
+        if (!self::$instance) {
+            self::$instance = new self;
+        }
+
+        return self::$instance;
     }
 
     /**
