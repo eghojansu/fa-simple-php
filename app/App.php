@@ -50,6 +50,8 @@ class App
     {
         $this->service = new Service;
         $this->registerServices($this->rules);
+        $this->data['modulePath'] = __DIR__.'/modules/';
+        $this->data['templatePath'] = __DIR__.'/template/';
     }
 
     /**
@@ -279,5 +281,20 @@ class App
         }
 
         return $this->assetRoot.ltrim($path, '/');
+    }
+
+    /**
+     * Get path
+     * @param  string $path
+     * @return string
+     */
+    public function urlPath($path)
+    {
+        $pos = strpos($path, '.');
+        if (false !== $pos) {
+            $path = substr($path, 0, $pos);
+        }
+
+        return str_replace($this->data['modulePath'], '', $path);
     }
 }

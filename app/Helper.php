@@ -12,6 +12,26 @@ class Helper
     public static $roman = [1=>'I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
 
     /**
+     * Ya
+     * @param  bool $val
+     * @return string
+     */
+    public static function ya($val)
+    {
+        return $val?'Ya':'Tidak';
+    }
+
+    /**
+     * Aktif
+     * @param  bool $val
+     * @return string
+     */
+    public static function aktif($val)
+    {
+        return $val?'Aktif':'Tidak Aktif';
+    }
+
+    /**
      * Number format wrapper
      * @param  number $no
      * @return string

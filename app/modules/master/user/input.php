@@ -4,7 +4,7 @@ $user = $app->service('user');
 $user->mustLogin()->orRedirect('index');
 
 $request = $app->service('request');
-$homeUrl = 'master/user';
+$homeUrl = $app->urlPath(__DIR__);
 $fields = [
     'name'=>$request->get('name'),
     'username'=>$request->get('username'),
@@ -45,6 +45,8 @@ if ($request->isPost()) {
 
 $html = $app->service('html');
 echo $html->notify('error', $error);
+
+$app->set('currentPath', $homeUrl);
 ?>
 <h1 class="page-header">
     Data User

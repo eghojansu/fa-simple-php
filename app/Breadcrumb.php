@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Generate breadcrumb
+ */
 class Breadcrumb
 {
 	protected $urls = [];
@@ -9,6 +12,12 @@ class Breadcrumb
 		$this->add($label, $link, $args);
 	}
 
+	/**
+	 * Add breadcrumb
+	 * @param string $label
+	 * @param string $link
+	 * @param array  $args
+	 */
 	public function add($label, $link = null, array $args = [])
 	{
 		$this->urls[] = ['label'=>$label,'link'=>$link,'args'=>$args];
@@ -16,6 +25,22 @@ class Breadcrumb
 		return $this;
 	}
 
+	/**
+	 * Remove item
+	 * @param  int $index
+	 */
+	public function remove($index)
+	{
+		unset($this->urls[$index]);
+
+		return $this;
+	}
+
+	/**
+	 * Render breadcrumb
+	 * @param  array  $options
+	 * @return string
+	 */
 	public function render(array $options = [])
 	{
 		$li = '';

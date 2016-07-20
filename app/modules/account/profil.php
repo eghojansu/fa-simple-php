@@ -30,7 +30,7 @@ if ($request->isPost()) {
     $data['password'] = $new_password;
   }
   // handle file
-  $filename = $app->get('base').'public/avatars/user-'.$user->get('id');
+  $filename = $request->baseDir().'public/avatars/user-'.$user->get('id');
   if (Helper::handleFileUpload('avatar', $filename, ['image/jpeg','image/jpg','image/png'])) {
     $data['avatar'] = basename($filename);
   }

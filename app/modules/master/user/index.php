@@ -13,10 +13,10 @@ if ($keyword = $request->query('keyword')) {
 }
 $page = $request->query('page', 1);
 $subset = $app->service('database')->paginate('user', $filter, null, $page);
-$selfUrl = 'master/user';
-$inputUrl = 'master/user/input';
-$deleteUrl = 'master/user/delete';
-$detailUrl = 'master/user/detail';
+$selfUrl = $app->urlPath(__DIR__);
+$inputUrl = $selfUrl.'/input';
+$deleteUrl = $selfUrl.'/delete';
+$detailUrl = $selfUrl.'/detail';
 
 $html = $app->service('html');
 echo $html->notify('success', $user->message('success'));

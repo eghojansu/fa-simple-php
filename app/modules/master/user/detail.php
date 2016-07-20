@@ -3,7 +3,7 @@
 $user = $app->service('user');
 $user->mustLogin()->orRedirect('index');
 
-$homeUrl = 'master/user';
+$homeUrl = $app->urlPath(__DIR__);
 $filter = [
     'id = ?',
     $app->service('request')->query('id')
@@ -13,6 +13,8 @@ if (empty($record)) {
     $user->message('error', 'Data tidak ditemukan');
     $app->service('response')->redirect($homeUrl);
 }
+
+$app->set('currentPath', $homeUrl);
 ?>
 <h1 class="page-header">
     Data User

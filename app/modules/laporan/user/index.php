@@ -14,13 +14,14 @@ if ($keyword = $request->query('keyword')) {
 $page = $request->query('page', 1);
 $subset = $app->service('database')->paginate('user', $filter, null, $page);
 
-$selfUrl = 'laporan/user';
-$printUrl = 'laporan/user/print';
-$downloadUrl = 'laporan/user/download';
+$selfUrl = $app->urlPath(__DIR__);
+$printUrl = $selfUrl.'/print';
+$downloadUrl = $selfUrl.'/download';
 
 $html = $app->service('html');
 echo $html->notify('success', $user->message('success'));
 echo $html->notify('error', $user->message('error'));
+$app->set('currentPath', $selfUrl);
 ?>
 <h1 class="page-header">Laporan User</h1>
 

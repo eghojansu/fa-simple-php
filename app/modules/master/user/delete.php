@@ -3,7 +3,7 @@
 $user = $app->service('user');
 $user->mustLogin()->orRedirect('index');
 
-$homeUrl = 'master/user';
+$homeUrl = $app->urlPath(__DIR__);
 $filter = [
     'id = ?',
     $app->service('request')->query('id')

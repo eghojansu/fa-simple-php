@@ -6,9 +6,6 @@ require 'app/autoload.php';
 // instantiate main class
 $app = App::instance();
 
-// set base path
-$app->set('base', realpath(__DIR__).'/');
-
 // register configuration from file
 $config = $app->load('app/config/config.php');
 $app->register($config);
@@ -41,8 +38,8 @@ if (!$user->exists('db_created')) {
 $app->copy('name', 'pageTitle');
 
 // module path
-$module_path   = __DIR__.'/app/modules/';
-$template_path = __DIR__.'/app/template/';
+$module_path   = $app->get('modulePath');
+$template_path = $app->get('templatePath');
 // extension
 $extension     = '.php';
 // current path

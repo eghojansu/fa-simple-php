@@ -13,7 +13,8 @@ if ($keyword = $request->query('keyword')) {
 }
 $data = $app->service('database')->find('user', $filter);
 
-$parentUrl = 'laporan/user';
+$parentUrl = $app->urlPath(__DIR__);
+$app->set('currentPath', $parentUrl);
 ?>
 <h1 class="page-header">Laporan User</h1>
 
