@@ -14,18 +14,18 @@ if ($keyword = $request->query('keyword')) {
 $page = $request->query('page', 1);
 $subset = $app->service('database')->paginate('user', $filter, null, $page);
 
-$selfUrl = $app->urlPath(__DIR__);
-$printUrl = $selfUrl.'/print';
-$downloadUrl = $selfUrl.'/download';
+$homeUrl = $app->urlPath(__DIR__);
+$printUrl = $homeUrl.'/print';
+$downloadUrl = $homeUrl.'/download';
 
 $html = $app->service('html');
 echo $html->notify('success', $user->message('success'));
 echo $html->notify('error', $user->message('error'));
-$app->set('currentPath', $selfUrl);
+$app->set('currentPath', $homeUrl);
 ?>
 <h1 class="page-header">Laporan User</h1>
 
-<?php echo $html->pagination($subset, ['route'=>$selfUrl]); ?>
+<?php echo $html->pagination($subset, ['route'=>$homeUrl]); ?>
 
 <form class="form-inline">
     <div class="form-group">

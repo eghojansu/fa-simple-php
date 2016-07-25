@@ -14,25 +14,6 @@ $app->register($config);
 $config = $app->load('app/config/services.php');
 $app->registerServices($config);
 
-// database manipulation
-$user = $app->service('user');
-if (!$user->exists('db_created')) {
-    $db = $app->service('database');
-    $db
-        ->drop()
-        ->create()
-        ->import('app/schema/1 schema.sql')
-        ->import('app/schema/2 user-init.sql');
-    for ($i=0; $i < 100; $i++) {
-        $data['name'] = 'User '.$i;
-        $data['username'] = 'user-'.$i;
-        $data['password'] = $data['username'];
-        $db->insert('user', $data);
-    }
-    $user->set('db_created', true);
-}
-// end database manipulation
-
 // set default page title
 // by copying application name to pageTitle variable
 $app->copy('name', 'pageTitle');

@@ -13,13 +13,13 @@ if ($keyword = $request->query('keyword')) {
 }
 $data = $app->service('database')->find('user', $filter);
 
-$parentUrl = $app->urlPath(__DIR__);
-$app->set('currentPath', $parentUrl);
+$homeUrl = $app->urlPath(__DIR__);
+$app->set('currentPath', $homeUrl);
 ?>
 <h1 class="page-header">Laporan User</h1>
 
 <div class="btn-group pull-right hidden-print" role="group">
-    <a href="<?php echo $app->url($parentUrl, $_GET); ?>" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span> Kembali</a>
+    <a href="<?php echo $app->url($homeUrl, $_GET); ?>" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span> Kembali</a>
     <button class="btn btn-info" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</button>
 </div>
 <br class="hidden-print">

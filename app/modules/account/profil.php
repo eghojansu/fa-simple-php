@@ -9,6 +9,7 @@ $password     = $request->get('password', $user->get('password'));
 $new_password = $request->get('new_password');
 $name         = $request->get('name', $user->get('name'));
 $error        = null;
+$selfUrl      = $app->urlPath(__FILE__);
 
 if ($request->isPost()) {
   $old_password = $user->get('password');
@@ -45,7 +46,7 @@ if ($request->isPost()) {
     if ($saved) {
       $user->register($data);
       $user->message('success', 'Data sudah diupdate');
-      $app->service('response')->redirect('account/profil');
+      $app->service('response')->redirect($selfUrl);
     }
     else {
       $error = 'Data gagal disimpan!'.$db->getError();
@@ -102,7 +103,7 @@ echo $html->notify('success', $user->message('success'));
       <hr>
       <div class="form-group">
         <div class="col-md-8 col-md-offset-4">
-          <button type="submit" class="btn btn-primary">Login</button>
+          <button type="submit" class="btn btn-primary">Update</button>
           <a href="<?php echo $app->url('index'); ?>" class="btn btn-default">Batal</a>
         </div>
       </div>

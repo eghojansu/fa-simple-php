@@ -13,10 +13,10 @@ if ($keyword = $request->query('keyword')) {
 }
 $page = $request->query('page', 1);
 $subset = $app->service('database')->paginate('user', $filter, null, $page);
-$selfUrl = $app->urlPath(__DIR__);
-$inputUrl = $selfUrl.'/input';
-$deleteUrl = $selfUrl.'/delete';
-$detailUrl = $selfUrl.'/detail';
+$homeUrl = $app->urlPath(__DIR__);
+$inputUrl = $homeUrl.'/input';
+$deleteUrl = $homeUrl.'/delete';
+$detailUrl = $homeUrl.'/detail';
 
 $html = $app->service('html');
 echo $html->notify('success', $user->message('success'));
@@ -24,7 +24,7 @@ echo $html->notify('error', $user->message('error'));
 ?>
 <h1 class="page-header">Data User</h1>
 
-<?php echo $html->pagination($subset, ['route'=>$selfUrl]); ?>
+<?php echo $html->pagination($subset, ['route'=>$homeUrl]); ?>
 
 <form class="form-inline">
     <div class="form-group">

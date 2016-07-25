@@ -34,11 +34,12 @@ class Helper
     /**
      * Number format wrapper
      * @param  number $no
+     * @param  int $decimal
      * @return string
      */
-    public static function number($no)
+    public static function number($no, $decimal = 2)
     {
-        return number_format($no, 2, ',', '.');
+        return number_format($no, $decimal, ',', '.');
     }
 
     /**

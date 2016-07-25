@@ -1,0 +1,43 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__.'/../vendor/autoload.php';
+
+use Symfony\Component\Console\Application;
+use Symfony\Component\Finder\Finder;
+
+// main app class
+$app = App::instance();
+
+$basePath = realpath(__DIR__.'/..').'/';
+
+// set current base path
+$app->set('basePath', $basePath);
+
+// register configuration from file
+$config = $app->load($basePath.'app/config/config.php');
+$app->register($config);
+
+// register services
+$config = $app->load($basePath.'app/config/services.php');
+$app->registerServices($config);
+
+// -----------------------------------------------------------------------------
+
+$app = new Application;
+// scaning commands
+$finder = new Finder;
+$finder->files()->in(__DIR__.'/commands')->name('*Command.php');
+foreach ($finder as $file) {
+    $content = $file->getContents();
+    $namespace = null;
+    if (preg_match('/namespace ([\w\\\\]+)/', $content, $matches)) {
+        $namespace = $matches[1].'\\';
+    }
+    $class = $file->getBasename('.php');
+    $command = $namespace . $class;
+    $app->add(new $command);
+}
+$finder = null;
+unset($content, $finder, $config, $basePath);
+$app->run();
