@@ -24,6 +24,7 @@ class ClearCommand extends Command
     {
         // fill table list here
         $tables = [
+            'user',
         ];
         $tableToClear = $tables;
         if ($filter = $input->getArgument('table')) {
@@ -36,11 +37,12 @@ class ClearCommand extends Command
             $tableToClear = $tables;
         }
 
-        $pdo = App::instance()->service('database')->pdo();
+        $db = App::instance()->service('database');
+        $sql = '';
         foreach ($tableToClear as $table) {
-            $pdo->exec("delete from $table");
-            $output->writeln("    - <fg=green>'$table'</> cleared", OutputInterface::VERBOSITY_VERBOSE);
+            $sql .= "delete from $table;";
         }
+        $db->pdo()->exec($sql);
         $count = count($tableToClear);
         $output->writeln("  <fg=yellow>$count table(s) cleared</>");
     }

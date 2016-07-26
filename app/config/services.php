@@ -8,10 +8,6 @@ return [
         'constructParams'=>[$database],
         'shared'=>true,
     ],
-    // 'model' => [
-    //     'instanceOf'=>'Model',
-    //     'shared'=>true,
-    // ],
     // 'breadcrumb' => [
     //     'instanceOf'=>'Breadcrumb',
     //     'shared'=>true,

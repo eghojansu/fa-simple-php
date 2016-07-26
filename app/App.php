@@ -5,7 +5,7 @@
  *
  * Simplify access to global vars,
  */
-class App
+class App extends Magic
 {
     protected $data = [
         // hold output
@@ -33,9 +33,21 @@ class App
             'instanceOf'=>'User',
             'shared'=>true,
         ],
+        'model' => [
+            'instanceOf'=>'Model',
+            'shared'=>true,
+            'substitutions'=>['Database'=>['instance'=>'database']]
+        ],
         'validation' => [
             'instanceOf'=>'Validation',
-        ]
+        ],
+        'form' => [
+            'instanceOf'=>'Form',
+        ],
+        'batchInsert' => [
+            'instanceOf'=>'BatchInsert',
+            'substitutions'=>['Database'=>['instance'=>'database']]
+        ],
     ];
     protected $assetRoot;
     public    $service;
@@ -88,16 +100,6 @@ class App
     }
 
     /**
-     * Register array variabel
-     */
-    public function register(array $data)
-    {
-        $this->data = array_replace_recursive($this->data, $data);
-
-        return $this;
-    }
-
-    /**
      * Register services
      * @param  array  $rules
      * @see  Level-2/Dice
@@ -145,100 +147,6 @@ class App
         }
 
         return [];
-    }
-
-    /**
-     * Get variable
-     * @param  string $var     variable name
-     * @param  mixed $default  default value if variable doesn't exists
-     * @return mixed
-     */
-    public function get($var, $default = null)
-    {
-        return isset($this->data[$var])?$this->data[$var]:$default;
-    }
-
-    /**
-     * Set variable
-     * @param string $var variable name
-     * @param mixed $val value
-     */
-    public function set($var, $val)
-    {
-        $this->data[$var] = $val;
-
-        return $this;
-    }
-
-    /**
-     * Check variable existance
-     * @param  string $var variable name
-     * @return bool
-     */
-    public function exists($var)
-    {
-        return (bool) isset($this->data[$var]);
-    }
-
-    /**
-     * Remove variable
-     * @param  string $var variable name
-     */
-    public function clear($var)
-    {
-        unset($this->data[$var]);
-
-        return $this;
-    }
-
-    /**
-     * Cut variable
-     * @param  string $source variable name
-     * @return mixed
-     */
-    public function cut($var)
-    {
-        $val = $this->get($var);
-        $this->clear($var);
-
-        return $val;
-    }
-
-    /**
-     * Copy variable
-     * @param  string $source variable name
-     * @param  string $dest   variable name
-     * @return mixed
-     */
-    public function copy($source, $dest)
-    {
-        $this->data[$dest] = $this->get($source);
-
-        return $this;
-    }
-
-    /**
-     * Append variable with other value, only for string type
-     * @param  string $var variable name
-     * @param  string $val value to append
-     */
-    public function append($var, $val)
-    {
-        $this->data[$var] = $this->get($var) . $val;
-
-        return $this;
-    }
-
-    /**
-     * Prepend variable with other value, only for string type
-     * @param  string $var variable name
-     * @param  string $val value to prepend
-     */
-    public function prepend($var, $val)
-    {
-        $this->data[$var] = $val . $this->get($var);
-
-        return $this;
     }
 
     /**
@@ -296,5 +204,10 @@ class App
         }
 
         return str_replace($this->data['modulePath'], '', $path);
+    }
+
+    protected function &getPool()
+    {
+        return $this->data;
     }
 }

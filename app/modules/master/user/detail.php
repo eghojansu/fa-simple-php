@@ -5,8 +5,9 @@ $user->mustLogin()->orRedirect('index');
 
 $homeUrl = $app->urlPath(__DIR__);
 $filter = [
-    'id = ?',
-    $app->service('request')->query('id')
+    'id = ? and id <> ?',
+    $app->service('request')->query('id'),
+    $user->get('id'),
 ];
 $record = $app->service('database')->findOne('user', $filter);
 if (empty($record)) {

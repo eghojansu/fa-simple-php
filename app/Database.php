@@ -115,11 +115,11 @@ class Database
      * Get next id for table
      * @param  string $table
      * @param  string $column
-     * @param  array  $criteria
      * @param  callable $formatter
+     * @param  array  $criteria
      * @return string|int
      */
-    public function nextID($table, $column, array $criteria = [], $formatter = null)
+    public function nextID($table, $column, $formatter = null, array $criteria = [])
     {
         $record = $this->selectOne($column, $table, $criteria, 'order by '.$column.' desc limit 1');
         $nextID = $formatter?call_user_func_array($formatter, [$record]):($record?$record[$column]*1+1:1);
@@ -166,9 +166,8 @@ class Database
             'total' => 1,
         ];
 
-        if (($page['count'] = count($page['data'])) > 0) {
-            $page['total'] = (int) ceil($this->count($table, $criteria)/$limit);
-        }
+        $page['count'] = count($page['data']);
+        $page['total'] = (int) ceil($this->count($table, $criteria)/$limit);
 
         return $page;
     }
@@ -399,7 +398,7 @@ class Database
      * @param  array  $params
      * @param  array  $error
      */
-    protected function log($sql, array $params, array $error)
+    public function log($sql, array $params, array $error)
     {
         if (App::instance()->get('debug')) {
             $no = -1;
@@ -411,7 +410,7 @@ class Database
                 } elseif (isset($match['p']) && isset($params[$match['p']])) {
                     return "'".$params[$match['p']]."'";
                 } else {
-                    return null;
+                    return isset($match['qm'])?'?':':'.$match['p'];
                 }
             }, $sql);
             if ('00000' !== $error[0]) {

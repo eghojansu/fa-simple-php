@@ -12,6 +12,18 @@ class Helper
     public static $roman = [1=>'I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
 
     /**
+     * Join date
+     * @param  array  $date
+     * @return string
+     */
+    public static function joinDate(array $date)
+    {
+        ksort($date);
+
+        return implode('-', $date);
+    }
+
+    /**
      * Ya
      * @param  bool $val
      * @return string

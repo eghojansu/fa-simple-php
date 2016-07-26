@@ -16,7 +16,8 @@ class Validation
      *            // same field can use - (hypen) as prefix (this is tricky way)
      *            '-data' => 'equal(otherfieldvalue)',
      *            // callback can be used too, should return boolean
-     *            '--data' => function(Validation $app){}
+     *            // @see validate
+     *            '--data' => function($value,$field,Validation $app){}
      *        ]
      * @param array $skips
      */
@@ -185,10 +186,10 @@ class Validation
             $rule = $this->extractRule($rule);
             $message = empty($rule['message'])?null:$rule['message'];
             $param = empty($rule['param'])?null:$rule['param'];
-            $ruleToCheck = '_'.$rule['rule'];
+            $ruleToCheck = is_string($rule['rule'])?'_'.$rule['rule']:null;
 
-            if (!method_exists($this, $ruleToCheck)) {
-                throw new Exception('No validation for '.$ruleToCheck, 1);
+            if ($ruleToCheck && !method_exists($this, $ruleToCheck)) {
+                throw new Exception('No validation for '.$rule['rule'], 1);
             }
 
             foreach ($fields as $field) {
@@ -197,11 +198,16 @@ class Validation
                 }
 
                 $value = $this->data[$field];
-                $params = [$value,$param,$field];
-                $result = call_user_func_array([$this, $ruleToCheck], $params);
-                if (!$result) {
-                    $this->setError($field, $value, $message, $param, $rule['rule']);
-                    break(2);
+                if ($ruleToCheck) {
+                    $params = [$value,$param,$field];
+                    $result = call_user_func_array([$this, $ruleToCheck], $params);
+                    if (!$result) {
+                        $this->setError($field, $value, $message, $param, $rule['rule']);
+                        break(2);
+                    }
+                } else {
+                    $params = [$value,$field,$this];
+                    call_user_func_array($rule['rule'], $params);
                 }
             }
         }
@@ -217,7 +223,7 @@ class Validation
      * @param string $params
      * @param string $rule
      */
-    public function setError($field, $value, $message, $params, $rule)
+    public function setError($field, $value, $message, $params = null, $rule = null)
     {
         $params = preg_replace('/,\s*allowEmpty$/', '', $params);
         $replace = [

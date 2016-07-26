@@ -23,16 +23,19 @@ NOTIFY
 
     /**
      * Bootstrap alert
-     * @param  string $type    
-     * @param  string $message 
-     * @return string          
+     * @param  string $type
+     * @param  string $message
+     * @param  string $head
+     * @return string
      */
-    public function alert($type, $message)
+    public function alert($type, $message, $head = null)
     {
+        $head = $head?"<strong>$head</strong>":$head;
+
         return $message?<<<NOTIFY
 <div class="alert alert-$type alert-dismissible" role="alert">
   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-  <strong>$type!</strong> $message
+  $head $message
 </div>
 NOTIFY
 : null;
@@ -220,7 +223,7 @@ NOTIFY
 
         $str = '';
         if ($max > 1) {
-            $isFirstPage = 1 === $page;
+            $isFirstPage = $page <= 1;
             $str .= '<li'.($isFirstPage?' class="disabled"':'').'>'
                  .  '<a href="'.($isFirstPage?'#':$this->paginationHref($option, 1)).'">&laquo;</a>'
                  .  '</li>';
@@ -247,7 +250,7 @@ NOTIFY
                 $str .= '<li><a style="'.$ellipsisStyle.'">...</a></li>';
             }
 
-            $isMaxPage = $max === $page;
+            $isMaxPage = $page >= $max;
             $str .= '<li'.($isMaxPage?' class="disabled"':'').'>'
                  .  '<a href="'.($isMaxPage?'#':$this->paginationHref($option, $page+1<=$max?$page+1:$page)).'">&rsaquo;</a>'
                  .  '</li>';

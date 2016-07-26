@@ -13,8 +13,9 @@ $fields = [
 ];
 $error = null;
 $filter = [
-    'id = ?',
-    $request->query('id')
+    'id = ? and id <> ?',
+    $request->query('id'),
+    $user->get('id'),
 ];
 $db = $app->service('database');
 $record = $db->findOne('user', $filter);
@@ -24,6 +25,12 @@ $record += $fields;
 if ($request->isPost()) {
     $rules = [
         'name,username,password'=>'required',
+        '-name'=>function($value, $field, Validation $validation) {
+            $pattern = '/^user/i';
+            if (!preg_match($pattern, $value)) {
+                $validation->setError($field, $value, 'Nama harus diawali user');
+            }
+        },
     ];
     $error = $app->service('validation', [$fields, $rules])->validate()->getError();
 
@@ -43,6 +50,13 @@ if ($request->isPost()) {
     }
 }
 
+$form = $app->service('form', [$record,[
+    'class'=>'form-horizontal'
+]]);
+$form->setDefaultControlAttrs([
+    'class'=>'form-control',
+    ]);
+
 $html = $app->service('html');
 echo $html->notify('error', $error);
 
@@ -53,33 +67,89 @@ $app->set('currentPath', $homeUrl);
     <small>input</small>
 </h1>
 
-<form method="post" class="form-horizontal">
+<?php echo $form->open(); ?>
     <div class="form-group">
         <label for="name" class="form-label col-md-2">Name</label>
         <div class="col-md-4">
-            <input type="text" name="name" placeholder="name" value="<?php echo $record['name']; ?>" class="form-control">
+            <?php echo $form->text('name'); ?>
         </div>
     </div>
     <div class="form-group">
         <label for="username" class="form-label col-md-2">Username</label>
         <div class="col-md-4">
-            <input type="text" name="username" placeholder="username" value="<?php echo $record['username']; ?>" class="form-control">
+            <?php echo $form->text('username'); ?>
         </div>
     </div>
     <div class="form-group">
         <label for="password" class="form-label col-md-2">Password</label>
         <div class="col-md-4">
-            <input type="password" name="password" placeholder="password" value="<?php echo $record['password']; ?>" class="form-control">
+            <?php echo $form->password('password'); ?>
         </div>
     </div>
     <div class="form-group">
         <label for="level" class="form-label col-md-2">Level</label>
         <div class="col-md-4">
-            <select name="level" class="form-control">
-                <?php foreach ($app->get('userLevel') as $level): ?>
-                    <option value="<?php echo $level; ?>" <?php echo $level===$record['level']?'selected':null; ?>><?php echo $level; ?></option>
-                <?php endforeach; ?>
-            </select>
+            <?php echo $form->select('level',['options'=>$app->get('userLevel')]); ?>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="exampleRadio" class="form-label col-md-2">Example Radio</label>
+        <div class="col-md-4">
+            <?php echo $form->radio('exampleRadio',['class'=>'','label'=>'Radio Single'],true); ?>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="exampleCheckbox" class="form-label col-md-2">Example Checkbox</label>
+        <div class="col-md-4">
+            <?php echo $form->checkbox('exampleCheckbox',['class'=>'','value'=>'notchecekd'],true); ?>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="exampleRadioWrapped" class="form-label col-md-2">Example RadioWrapped</label>
+        <div class="col-md-4">
+            <?php echo $form->radio('exampleRadioWrapped',['class'=>'','label'=>'RadioWrapped Single','wrapLabel'=>true],true); ?>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="exampleCheckboxWrapped" class="form-label col-md-2">Example CheckboxWrapped</label>
+        <div class="col-md-4">
+            <?php echo $form->checkbox('exampleCheckboxWrapped',['class'=>'','wrapLabel'=>true],true); ?>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="exampleRadioList" class="form-label col-md-2">Example RadioList</label>
+        <div class="col-md-4">
+            <?php echo $form->radioList('exampleRadioList',['class'=>'','options'=>$app->get('userLevel'),'wrapLabel'=>['class'=>'radio-inline']],true); ?>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="exampleCheckboxList" class="form-label col-md-2">Example CheckboxList</label>
+        <div class="col-md-4">
+            <?php echo $form->checkboxList('exampleCheckboxList',['class'=>'','options'=>$app->get('userLevel'),'wrapLabel'=>['class'=>'checkbox-inline']],true); ?>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="exampleTextarea" class="form-label col-md-2">Textarea</label>
+        <div class="col-md-4">
+            <?php echo $form->textarea('acd'); ?>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="monthList" class="form-label col-md-2">monthList</label>
+        <div class="col-md-4">
+            <?php echo $form->monthList('monthList',['placeholder'=>'pilih bulan']); ?>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="numberList" class="form-label col-md-2">numberList</label>
+        <div class="col-md-4">
+            <?php echo $form->numberList('numberList',['placeholder'=>'tahun','start'=>2016,'end'=>2020]); ?>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="dateList" class="form-label col-md-2">dateList</label>
+        <div class="col-md-4">
+            <?php echo $form->dateList('dateList',[]); ?>
         </div>
     </div>
     <div class="form-group">

@@ -4,12 +4,10 @@ $user = $app->service('user');
 $user->mustLogin()->orRedirect('index');
 
 $request = $app->service('request');
-$filter = [];
+$filter = ['id <> :self', ':self'=>$user->get('id')];
 if ($keyword = $request->query('keyword')) {
-    $filter = [
-        '(name like :keyword or username like :keyword)',
-        ':keyword' => '%'.$keyword.'%'
-    ];
+    $filter[0] .= ' and (name like :keyword or username like :keyword)';
+    $filter[':keyword'] = '%'.$keyword.'%';
 }
 $page = $request->query('page', 1);
 $subset = $app->service('database')->paginate('user', $filter, null, $page);

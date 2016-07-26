@@ -5,15 +5,25 @@
 return [
     // application name
     'name' => 'Application Name',
+
     // application alias name
     'alias' => 'AN',
+
+    // application description
+    'desc' => 'Application description',
+
+    // owner
+    'owner' => 'Somebody',
+
     // template
     'template' => 'default',
+
     // session name
-    'session' => 'ABCDEF',
+    'session' => 'Fa-SP',
+
     // user level
     'userLevel' => [
-        'user',
-        'admin',
+        'User'=>'user',
+        'Admin'=>'admin',
     ],
 ];

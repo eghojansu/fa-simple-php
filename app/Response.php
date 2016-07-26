@@ -97,13 +97,14 @@ class Response
     {
         $content = $this->getContent();
         $this->clearContent();
-        if (!App::instance()->get('headerOff')) {
+        $app = App::instance();
+        if (!$app->get('headerOff')) {
             $this->sendHeader();
         }
-        if (!App::instance()->get('quiet')) {
+        if (!$app->get('quiet')) {
             echo $content;
 
-            if (App::instance()->get('halt')) {
+            if ($app->get('halt')) {
                 die;
             }
         }

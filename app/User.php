@@ -3,7 +3,7 @@
 /**
  * User class
  */
-class User
+class User extends Magic
 {
     protected $data;
     protected $redirectOK = false;
@@ -16,120 +16,6 @@ class User
             $_SESSION[$key] = [];
         }
         $this->data =& $_SESSION[$key];
-    }
-
-    /**
-     * Register data
-     * @param  array  $data
-     */
-    public function register(array $data)
-    {
-        $this->data = array_replace_recursive($this->data, $data);
-
-        return $this;
-    }
-
-    /**
-     * Get var
-     * @param  string $var
-     * @return  mixed
-     */
-    public function get($var)
-    {
-        return isset($this->data[$var])?$this->data[$var]:null;
-    }
-
-    /**
-     * Set var
-     * @param string $var
-     * @param mixed $val
-     */
-    public function set($var, $val)
-    {
-        $this->data[$var] = $val;
-
-        return $this;
-    }
-
-    /**
-     * Check var existance
-     * @param  string $var
-     * @return bool
-     */
-    public function exists($var)
-    {
-        return isset($this->data[$var]);
-    }
-
-    /**
-     * Clear var
-     * @param  string $var
-     */
-    public function clear($var)
-    {
-        unset($this->data[$var]);
-
-        return $this;
-    }
-
-    /**
-     * Check var content is equal
-     * @param  string  $var
-     * @param  string  $val
-     * @return boolean
-     */
-    public function is($var, $val)
-    {
-        return $this->get($var) === $val;
-    }
-
-    /**
-     * Cut var
-     * @param  string $var
-     * @return mixed
-     */
-    public function cut($var)
-    {
-        $val = $this->get($var);
-        $this->clear($var);
-
-        return $val;
-    }
-
-    /**
-     * Copy var
-     * @param  string $source var name
-     * @param  string $dest   var name
-     */
-    public function copy($source, $dest)
-    {
-        $this->data[$dest] = $this->get($source);
-
-        return $this;
-    }
-
-    /**
-     * Append val to $var
-     * @param  string $var
-     * @param  string $val
-     */
-    public function append($var, $val)
-    {
-        $this->data[$var] = $this->get($var) . $val;
-
-        return $this;
-    }
-
-    /**
-     * Prepend val to $var
-     * @param  string $var
-     * @param  string $val
-     */
-    public function prepend($var, $val)
-    {
-        $this->data[$var] = $val . $this->get($var);
-
-        return $this;
     }
 
     /**
@@ -234,5 +120,10 @@ class User
         }
 
         return $this;
+    }
+
+    protected function &getPool()
+    {
+        return $this->data;
     }
 }
