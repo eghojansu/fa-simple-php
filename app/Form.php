@@ -118,6 +118,20 @@ class Form
     }
 
     /**
+     * Generate hidden control
+     * @see  input
+     */
+    public function hidden($name, array $attrs = [], $override = false)
+    {
+        $default = [
+            'value'=>null,
+        ];
+        $str = $this->input('hidden', $name, $attrs+$default, $override);
+
+        return $str;
+    }
+
+    /**
      * Generate radio control
      * @see  input
      */
