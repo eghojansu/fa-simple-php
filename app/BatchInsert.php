@@ -8,6 +8,11 @@ class BatchInsert
     protected $db;
     protected $table;
     protected $chunk;
+    protected $counter = 0;
+    protected $queryExecuted = 0;
+    protected $last = true;
+    protected $log;
+    protected $info;
     protected $data = [];
 
     /**
@@ -16,7 +21,7 @@ class BatchInsert
      * @param string   $table
      * @param integer  $chunk chunk size
      */
-    public function __construct(Database $db, $table, $chunk = 100)
+    public function __construct(Database $db, $table, $chunk = 20)
     {
         $this->db = $db;
         $this->table = $table;
@@ -30,6 +35,15 @@ class BatchInsert
     public function add(array $data)
     {
         $this->data[] = $data;
+        $this->counter++;
+
+        // to prevent memory over usage
+        if ($this->counter % $this->chunk === 0) {
+            // auto execute
+            $this->last = false;
+            $this->execute();
+            $this->last = true;
+        }
 
         return $this;
     }
@@ -53,7 +67,7 @@ class BatchInsert
      */
     public function count()
     {
-        return count($this->data);
+        return $this->counter;
     }
 
     /**
@@ -62,35 +76,32 @@ class BatchInsert
      */
     public function execute()
     {
-        $pdo = $this->db->pdo();
-        $data = $this->data;
-        $first = $this->prepare([array_shift($data)]);
-        $query = $pdo->prepare($first['sql']);
-        $query->execute($first['data']);
-        $info = $query->errorInfo();
-        $success = $info[0] === '00000';
+        if ($this->data) {
+            $pdo = $this->db->pdo();
+            $first = $this->prepare([array_shift($this->data)]);
+            $query = $pdo->prepare($first['sql']);
+            $query->execute($first['data']);
+            $info = $query->errorInfo();
+            $success = $info[0] === '00000';
 
-        $queryExecuted = 0;
-        if ($success) {
-            $queryExecuted++;
-            $chunksData = array_chunk($data, $this->chunk);
-            foreach ($chunksData as $key => $data) {
-                $current = $this->prepare($data);
-                $query = $pdo->prepare($current['sql']);
-                $query->execute($current['data']);
+            if ($success) {
+                $this->queryExecuted++;
+                $next = $this->prepare($this->data);
+                $query = $pdo->prepare($next['sql']);
+                $query->execute($next['data']);
                 $info = $query->errorInfo();
                 $success = $info[0] === '00000';
-                if (!$success) {
-                    break;
-                }
-                $queryExecuted++;
+                $this->data = [];
+                $this->queryExecuted++;
             }
-            unset($chunksData,$current);
+            $this->log = "$first[sql] {repeated {queryExecuted} time(s)}";
+            $this->info = $info;
         }
-        $log = "$first[sql] {repeated $queryExecuted time(s)}";
-        $this->db->log($log, [], $info);
+        if ($this->last) {
+            $this->db->log(str_replace('{queryExecuted}', $this->queryExecuted, $this->log), [], $this->info);
+        }
 
-        return $success;
+        return $this->queryExecuted > 0;
     }
 
     /**

@@ -14,6 +14,9 @@ $app->register($config);
 $config = $app->load('app/config/services.php');
 $app->registerServices($config);
 
+// show file entry on url
+$app->set('showEntryFile',true);
+
 // set default page title
 // by copying application name to pageTitle variable
 $app->copy('name', 'pageTitle');
@@ -24,7 +27,9 @@ $template_path = $app->get('templatePath');
 // extension
 $extension     = '.php';
 // current path
-$current_path  = str_replace($extension, '', $app->service('request')->currentPath());
+$current_path  = $app->service('request')->currentPath(true);
+// replace extension
+$current_path  = preg_replace('/'.$extension.'$/', '', $current_path);
 // ensure this is absolute path
 $current_path  = Helper::ensureAbsolute($current_path);
 // path to load, if current path exists use it otherwise use default (index page)

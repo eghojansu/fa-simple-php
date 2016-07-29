@@ -26,4 +26,12 @@ return [
         'User'=>'user',
         'Admin'=>'admin',
     ],
+
+    // image types
+    'imageTypes' => [
+        'image/jpeg','image/jpg','image/png'
+    ],
+
+    // debug
+    'debug'=>true,
 ];

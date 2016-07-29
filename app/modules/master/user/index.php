@@ -4,15 +4,17 @@ $user = $app->service('user');
 $user->mustLogin()->orRedirect('index');
 
 $request = $app->service('request');
+$db = $app->service('database');
 $filter = ['id <> :self', ':self'=>$user->get('id')];
 if ($keyword = $request->query('keyword')) {
     $filter[0] .= ' and (name like :keyword or username like :keyword)';
     $filter[':keyword'] = '%'.$keyword.'%';
 }
 $page = $request->query('page', 1);
-$subset = $app->service('database')->paginate('user', $filter, null, $page);
+$subset = $db->paginate('user', $filter, null, $page);
 $homeUrl = $app->urlPath(__DIR__);
-$inputUrl = $homeUrl.'/input';
+$createUrl = $homeUrl.'/create';
+$updateUrl = $homeUrl.'/update';
 $deleteUrl = $homeUrl.'/delete';
 $detailUrl = $homeUrl.'/detail';
 
@@ -42,7 +44,7 @@ echo $html->notify('error', $user->message('error'));
             <th>Username</th>
             <th>Level</th>
             <th>
-                <a class="text-primary" href="<?php echo $app->url($inputUrl); ?>" data-toggle="tooltip" title="Data baru"><span class="glyphicon glyphicon-plus-sign"></span></a>
+                <a class="text-primary" href="<?php echo $app->url($createUrl); ?>" data-toggle="tooltip" title="Data baru"><span class="glyphicon glyphicon-plus-sign"></span></a>
             </th>
         </tr>
     </thead>
@@ -56,7 +58,7 @@ echo $html->notify('error', $user->message('error'));
                     <td><?php echo $row['level']; ?></td>
                     <td>
                         <a class="text-warning" href="<?php echo $app->url($detailUrl, ['id'=>$row['id']]); ?>" data-toggle="tooltip" title="Detail"><span class="glyphicon glyphicon-eye-open"></span></a>
-                        <a class="text-success" href="<?php echo $app->url($inputUrl, ['id'=>$row['id']]); ?>" data-toggle="tooltip" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
+                        <a class="text-success" href="<?php echo $app->url($updateUrl, ['id'=>$row['id']]); ?>" data-toggle="tooltip" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
                         <a data-confirm="delete" class="text-danger" href="<?php echo $app->url($deleteUrl, ['id'=>$row['id']]); ?>" data-toggle="tooltip" title="Delete"><span class="glyphicon glyphicon-remove-sign"></span></a>
                     </td>
                 </tr>

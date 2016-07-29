@@ -15,7 +15,7 @@ class Form
      * @param array  $attrs
      * @param string $method
      */
-    public function __construct(array $record, array $attrs, $method = 'post')
+    public function __construct(array $record = [], array $attrs = [], $method = 'post')
     {
         $this->record = $record;
         $this->attrs = $attrs;

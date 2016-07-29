@@ -14,6 +14,8 @@ class App extends Magic
         'halt'  => true,
         // dont send header
         'headerOff' => false,
+        // show file entry in url
+        'showEntryFile'=>false,
     ];
     // default services
     protected $rules = [
@@ -62,8 +64,8 @@ class App extends Magic
     {
         $this->service = new Service;
         $this->registerServices($this->rules);
-        $this->data['modulePath'] = __DIR__.'/modules/';
-        $this->data['templatePath'] = __DIR__.'/template/';
+        $this->data['modulePath'] = Helper::fixSlashes(__DIR__.'/modules/');
+        $this->data['templatePath'] = Helper::fixSlashes(__DIR__.'/template/');
     }
 
     /**

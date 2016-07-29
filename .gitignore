@@ -1,3 +1,5 @@
+# app/console
+# app/commands/
 dev/*
 public/uploads/*
 public/avatars/*

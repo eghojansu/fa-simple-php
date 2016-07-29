@@ -3,8 +3,10 @@
 $user = $app->service('user');
 $user->mustLogin()->orRedirect('index');
 
-$request      = $app->service('request');
-$record = [
+$request  = $app->service('request');
+$response = $app->service('response');
+$db       = $app->service('database');
+$fields = [
   'username'=>$request->get('username', $user->get('username')),
   'password'=>$request->get('password', $user->get('password')),
   'new_password'=>$request->get('new_password', $user->get('new_password')),
@@ -21,28 +23,29 @@ if ($request->isPost()) {
     '-password'=>"equal($old_password),Password saat ini tidak valid",
     'new_password'=>'minLength(4,allowEmpty)',
   ];
-  $error = $app->service('validation', [$record, $rules])->validate()->getError();
-  if ($record['new_password']) {
-    $record['password'] = $record['new_password'];
-  }
-  unset($record['new_password']);
-  // handle file
-  $filename = $request->baseDir().'public/avatars/user-'.$user->get('id');
-  if (Helper::handleFileUpload('avatar', $filename, ['image/jpeg','image/jpg','image/png'])) {
-    $record['avatar'] = basename($filename);
-  }
+  $error = $app->service('validation', [$fields, $rules])->validate()->getError();
 
   if (!$error) {
-    $db = $app->service('database');
+    // handle file
+    $filename = $request->baseDir().'public/avatars/user-'.$user->get('id');
+    if (Helper::handleFileUpload('avatar', $filename, $app->get('imageTypes'))) {
+      $fields['avatar'] = basename($filename);
+    }
+
+    if ($fields['new_password']) {
+      $fields['password'] = $fields['new_password'];
+    }
+    unset($fields['new_password']);
+
     $filter = [
       'id = ?',
       $user->get('id'),
     ];
-    $saved = $db->update('user', $record, $filter);
+    $saved = $db->update('user', $fields, $filter);
     if ($saved) {
-      $user->register($record);
+      $user->register($fields);
       $user->message('success', 'Data sudah diupdate');
-      $app->service('response')->redirect($selfUrl);
+      $response->redirect($selfUrl);
     }
     else {
       $error = 'Data gagal disimpan!'.$db->getError();
@@ -53,7 +56,7 @@ if ($request->isPost()) {
 $avatar = $user->get('avatar');
 $avatar = $app->asset($avatar?'public/avatars/'.$avatar:'public/images/avatar.png');
 
-$form = $app->service('form', [$record,[
+$form = $app->service('form', [$fields,[
   'class'=>'form-horizontal',
   'enctype'=>'multipart/form-data'
   ]]);

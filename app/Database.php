@@ -368,9 +368,30 @@ class Database
      */
     public function dumpLog($halt = false)
     {
-        echo '<pre>';
-        echo $this->getLog();
-        echo '</pre>';
+        $body = '';
+        $no = 1;
+        foreach ($this->logs as $key => $value) {
+            $body .= '<tr>'
+                . '<td>'.$no.'</td>'
+                . '<td>'.$value.'</td>'
+                . '</tr>';
+            $no++;
+        }
+
+        echo <<<HTML
+<div class="database-log" style="padding: 10px; border-radius: 8px; border: solid 1px #ccc; margin-bottom: 10px">
+    <p style="margin: 0 0 10px"><strong>Database Log</strong></p>
+    <table style="width: 100%; border-collapse: collapse" border="1">
+        <thead>
+            <tr>
+                <th style="width: 30px">No</th>
+                <th>Query</th>
+            </tr>
+        </thead>
+        <tbody>$body</tbody>
+    </table>
+</div>
+HTML;
 
         if ($halt) {
             die;
@@ -383,9 +404,34 @@ class Database
      */
     public function dumpError($halt = false)
     {
-        echo '<pre>';
-        var_dump($this->errors);
-        echo '</pre>';
+        $body = '';
+        $no = 1;
+        foreach ($this->errors as $key => $value) {
+            $body .= '<tr>'
+                . '<td>'.$no.'</td>'
+                . '<td>'.$value[0].'</td>'
+                . '<td>'.$value[1].'</td>'
+                . '<td>'.$value[2].'</td>'
+                . '</tr>';
+            $no++;
+        }
+
+        echo <<<HTML
+<div class="database-error" style="padding: 10px; border-radius: 8px; border: solid 1px #ccc; margin-bottom: 10px">
+    <p style="margin: 0 0 10px"><strong>Database Error</strong></p>
+    <table style="width: 100%; border-collapse: collapse" border="1">
+        <thead>
+            <tr>
+                <th style="width: 30px">No</th>
+                <th style="width: 100px">ANSI Code</th>
+                <th style="width: 100px">Code</th>
+                <th>Message</th>
+            </tr>
+        </thead>
+        <tbody>$body</tbody>
+    </table>
+</div>
+HTML;
 
         if ($halt) {
             die;
@@ -415,6 +461,8 @@ class Database
             }, $sql);
             if ('00000' !== $error[0]) {
                 $this->errors[] = $error;
+
+                $this->dumpError(true);
             }
         }
     }

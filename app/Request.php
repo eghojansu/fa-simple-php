@@ -103,6 +103,7 @@ class Request
                      . '://'
                      . $_SERVER['SERVER_NAME']
                      . rtrim($this->basePath(), '/')
+                     . (App::instance()->get('showEntryFile')?'/'.$this->entryFile():'')
                      . (1*$_SERVER['SERVER_PORT'] === 80?'':':'.$_SERVER['SERVER_PORT'])
                      . '/'
                      ;
@@ -113,13 +114,17 @@ class Request
 
     /**
      * Get current path
+     * @param bool $removeEntry remove entry file
      * @return string
      */
-    public function currentPath()
+    public function currentPath($removeEntry = false)
     {
         $cp = str_replace($this->basePath(), '', $_SERVER['REQUEST_URI']);
         $cp = explode('?', $cp);
         $cp = $cp[0];
+        if ($removeEntry) {
+            $cp = ltrim(str_replace($this->entryFile(), '', $cp), '/');
+        }
 
         return $cp;
     }
@@ -142,5 +147,14 @@ class Request
     public function baseDir()
     {
         return Helper::fixSlashes(dirname($_SERVER['SCRIPT_FILENAME']));
+    }
+
+    /**
+     * Entry filename
+     * @return string
+     */
+    public function entryFile()
+    {
+        return basename($_SERVER['SCRIPT_FILENAME']);
     }
 }

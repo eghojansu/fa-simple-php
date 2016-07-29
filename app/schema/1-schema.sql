@@ -7,5 +7,6 @@ create table if not exists user (
 	name varchar(30) not null,
 	level varchar(30) not null default 'user',
 	avatar varchar(30) null default null,
-	primary key (id)
+	primary key (id),
+	unique key (username)
 ) engine = myisam;
