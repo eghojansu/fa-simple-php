@@ -15,23 +15,26 @@ return [
     // owner
     'owner' => 'Somebody',
 
+    // below is system variables -----------------------------------------------
+
+    // debug
+    'debug'=>true,
+    'continueOnDBError'=>false,
+
     // template
     'template' => 'default',
 
     // session name
     'session' => 'Fa-SP',
 
-    // user level
-    'userLevel' => [
-        'User'=>'user',
-        'Admin'=>'admin',
-    ],
-
     // image types
     'imageTypes' => [
         'image/jpeg','image/jpg','image/png'
     ],
 
-    // debug
-    'debug'=>true,
+    // user level
+    'userLevel' => [
+        'User'=>'user',
+        'Admin'=>'admin',
+    ],
 ];

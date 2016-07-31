@@ -14,13 +14,13 @@ class SeedCommand extends Command
     {
         $this
             ->setName('database:seed')
-            ->setDescription('Seeding database content')
+            ->setDescription('Seed database content')
             ;
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $app = App::instance()->debug();
+        $app = App::instance()->debug(true);
         $db = $app->service('database');
         $recordInserted = 0;
         $tableCounter = 0;

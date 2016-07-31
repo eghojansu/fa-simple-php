@@ -4,7 +4,6 @@ $user = $app->service('user');
 $user->mustLogin()->orRedirect('index');
 
 $request  = $app->service('request');
-$response = $app->service('response');
 $db       = $app->service('database');
 $fields = [
   'username'=>$request->get('username', $user->get('username')),
@@ -15,6 +14,7 @@ $fields = [
 $error   = null;
 $selfUrl = $app->urlPath(__FILE__);
 
+$labels = $app->load('app/config/translations/user-labels.php');
 if ($request->isPost()) {
   $old_password = $user->get('password');
   $rules = [
@@ -23,7 +23,8 @@ if ($request->isPost()) {
     '-password'=>"equal($old_password),Password saat ini tidak valid",
     'new_password'=>'minLength(4,allowEmpty)',
   ];
-  $error = $app->service('validation', [$fields, $rules])->validate()->getError();
+  $validation = $app->service('validation', [$fields, $rules,$labels]);
+  $error = $validation->validate()->getError();
 
   if (!$error) {
     // handle file
@@ -45,28 +46,34 @@ if ($request->isPost()) {
     if ($saved) {
       $user->register($fields);
       $user->message('success', 'Data sudah diupdate');
+      $response = $app->service('response');
       $response->redirect($selfUrl);
     }
     else {
-      $error = 'Data gagal disimpan!'.$db->getError();
+      $error = 'Data gagal disimpan!';
     }
   }
+
+  $user->message('error', $error);
 }
 
 $avatar = $user->get('avatar');
 $avatar = $app->asset($avatar?'public/avatars/'.$avatar:'public/images/avatar.png');
 
-$form = $app->service('form', [$fields,[
-  'class'=>'form-horizontal',
-  'enctype'=>'multipart/form-data'
-  ]]);
-$form->setDefaultControlAttrs([
-  'class'=>'form-control',
-  ]);
-
-$html = $app->service('html');
-echo $html->notify('error', $error);
-echo $html->notify('success', $user->message('success'));
+$form = $app->service('form')
+  ->setData($fields)
+  ->setLabels($labels)
+  ->setAttrs([
+    'class'=>'form-horizontal',
+    'enctype'=>'multipart/form-data'
+  ])
+  ->setDefaultControlAttrs([
+    'class'=>'form-control',
+  ])
+  ->setDefaultLabelAttrs([
+    'class'=>'form-label col-md-4',
+  ])
+;
 ?>
 <h1 class="page-header">Profile</h1>
 
@@ -74,35 +81,35 @@ echo $html->notify('success', $user->message('success'));
   <div class="col-md-5">
     <?php echo $form->open(); ?>
       <div class="form-group">
-        <label for="password" class="col-md-4 form-label">Password saat ini</label>
+        <?php echo $form->label('password'); ?>
         <div class="col-md-8">
           <?php echo $form->password('password',['value'=>null]); ?>
         </div>
       </div>
       <hr>
       <div class="form-group">
-        <label for="name" class="col-md-4 form-label">Nama</label>
+        <?php echo $form->label('name'); ?>
         <div class="col-md-8">
           <?php echo $form->text('name'); ?>
         </div>
       </div>
       <hr>
       <div class="form-group">
-        <label for="username" class="col-md-4 form-label">Username</label>
+        <?php echo $form->label('username'); ?>
         <div class="col-md-8">
           <?php echo $form->text('username'); ?>
         </div>
       </div>
       <hr>
       <div class="form-group">
-        <label for="avatar" class="col-md-4 form-label">Avatar</label>
+        <?php echo $form->label('avatar'); ?>
         <div class="col-md-8">
           <?php echo $form->file('avatar'); ?>
         </div>
       </div>
       <hr>
       <div class="form-group">
-        <label for="new_password" class="col-md-4 form-label">Password Baru</label>
+        <?php echo $form->label('password baru', ['for'=>'new_password']); ?>
         <div class="col-md-8">
           <?php echo $form->password('new_password', ['placeholder'=>'kosongkan jika tidak ingin mengubah password']); ?>
         </div>

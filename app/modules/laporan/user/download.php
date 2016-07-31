@@ -4,6 +4,7 @@ $user = $app->service('user');
 $user->mustLogin()->orRedirect('index');
 
 $request = $app->service('request');
+$db = $app->service('database');
 $filter = [];
 if ($keyword = $request->query('keyword')) {
     $filter = [
@@ -12,6 +13,6 @@ if ($keyword = $request->query('keyword')) {
     ];
 }
 
-$data = $app->service('database')->select('name,username,level', 'user', $filter);
+$data = $db->select('name,username,level', 'user', $filter);
 $header = ['Name','Username','Level'];
 Helper::sendCSV('data-user', $header, $data);

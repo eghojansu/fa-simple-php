@@ -19,8 +19,6 @@ $printUrl = $homeUrl.'/print';
 $downloadUrl = $homeUrl.'/download';
 
 $html = $app->service('html');
-echo $html->notify('success', $user->message('success'));
-echo $html->notify('error', $user->message('error'));
 $app->set('currentPath', $homeUrl);
 ?>
 <h1 class="page-header">Laporan User</h1>

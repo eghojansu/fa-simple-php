@@ -1,5 +1,6 @@
 <?php
-$app->service->get('response')->addHeader('HTTP/1.0 404 Not Found');
+$response = $app->service('response');
+$response->addHeader('HTTP/1.0 404 Not Found');
 $app->clear('template');
 ?>
 <!DOCTYPE html>

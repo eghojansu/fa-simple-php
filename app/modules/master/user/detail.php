@@ -3,16 +3,19 @@
 $user = $app->service('user');
 $user->mustLogin()->orRedirect('index');
 
+$request = $app->service('request');
+$db = $app->service('database');
 $homeUrl = $app->urlPath(__DIR__);
 $filter = [
     'id = ? and id <> ?',
-    $app->service('request')->query('id'),
+    $request->query('id'),
     $user->get('id'),
 ];
-$record = $app->service('database')->findOne('user', $filter);
+$record = $db->findOne('user', $filter);
 if (empty($record)) {
     $user->message('error', 'Data tidak ditemukan');
-    $app->service('response')->redirect($homeUrl);
+    $response = $app->service('response');
+    $response->redirect($homeUrl);
 }
 
 $app->set('currentPath', $homeUrl);

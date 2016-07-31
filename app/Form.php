@@ -5,9 +5,11 @@
  */
 class Form
 {
-    protected $record;
-    protected $attrs;
-    protected $controlAttrs;
+    protected $record = [];
+    protected $attrs = [];
+    protected $labels = [];
+    protected $controlAttrs = [];
+    protected $labelAttrs = [];
     protected $method;
 
     /**
@@ -15,11 +17,53 @@ class Form
      * @param array  $attrs
      * @param string $method
      */
-    public function __construct(array $record = [], array $attrs = [], $method = 'post')
+    public function __construct($method = 'post')
+    {
+        $this->method = strtoupper($method);
+    }
+
+    /**
+     * Record
+     * @param array $record
+     */
+    public function setData(array $record)
     {
         $this->record = $record;
+
+        return $this;
+    }
+
+    /**
+     * Label
+     * @param array $labels
+     */
+    public function setLabels(array $labels)
+    {
+        $this->labels = $labels;
+
+        return $this;
+    }
+
+    /**
+     * Form attrs
+     * @param array $attrs
+     */
+    public function setAttrs(array $attrs)
+    {
         $this->attrs = $attrs;
-        $this->method = strtoupper($method);
+
+        return $this;
+    }
+
+    /**
+     * Default label attrs
+     * @param array $attrs
+     */
+    public function setDefaultLabelAttrs(array $attrs)
+    {
+        $this->labelAttrs = $attrs;
+
+        return $this;
     }
 
     /**
@@ -53,6 +97,24 @@ class Form
     public function close()
     {
         $str = '</form>';
+
+        return $str;
+    }
+
+    /**
+     * Generate control label
+     * @param  string  $name
+     * @param  array   $attrs
+     * @param  boolean $override
+     * @return string
+     */
+    public function label($name, array $attrs = [], $override = false)
+    {
+        $default = [
+            'for'=>$name,
+        ];
+        $attrs = ($override?$attrs:$this->mergeAttribute($this->labelAttrs, $attrs))+$default;
+        $str = '<label'.$this->renderAttribute($attrs).'>'.$this->readName($name).'</label>';
 
         return $str;
     }
@@ -432,6 +494,6 @@ class Form
 
     protected function readName($name)
     {
-        return ucwords(str_replace('_', ' ', $name));
+        return isset($this->labels[$name])?$this->labels[$name]:ucwords(str_replace('_', ' ', $name));
     }
 }

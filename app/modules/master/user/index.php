@@ -19,8 +19,6 @@ $deleteUrl = $homeUrl.'/delete';
 $detailUrl = $homeUrl.'/detail';
 
 $html = $app->service('html');
-echo $html->notify('success', $user->message('success'));
-echo $html->notify('error', $user->message('error'));
 ?>
 <h1 class="page-header">Data User</h1>
 

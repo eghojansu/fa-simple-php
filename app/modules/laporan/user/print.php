@@ -4,6 +4,7 @@ $user = $app->service('user');
 $user->mustLogin()->orRedirect('index');
 
 $request = $app->service('request');
+$db = $app->service('database');
 $filter = [];
 if ($keyword = $request->query('keyword')) {
     $filter = [
@@ -11,7 +12,7 @@ if ($keyword = $request->query('keyword')) {
         ':keyword' => '%'.$keyword.'%'
     ];
 }
-$data = $app->service('database')->find('user', $filter);
+$data = $db->find('user', $filter);
 
 $homeUrl = $app->urlPath(__DIR__);
 $app->set('currentPath', $homeUrl);

@@ -314,18 +314,39 @@ class Database
      * Populate record and transform to key=value pair array
      * @param  string $table
      * @param  string $key      column name as key
-     * @param  string|callable $value    column name as value
+     * @param  string|callable|null|array $value    column name as value
      * @param  array  $criteria
      * @param  string $options
      * @return array
      */
-    public function populate($table, $key, $value, array $criteria = [], $options = '')
+    public function populate($table, $key, $value = null, array $criteria = [], $options = '')
     {
         $data = [];
         $records = $this->find($table, $criteria, $options);
         foreach ($records as $record) {
-            $data[$record[$key]] = is_string($value)?
-                $record[$value]:call_user_func_array($value, [$record]);
+            if (is_null($value)) {
+                $v = $record[$key];
+            } elseif (is_array($value)) {
+                if (empty($value)) {
+                    $v = $record;
+                } else {
+                    $v = [];
+                    foreach ($value as $k) {
+                        if (!isset($record[$k])) {
+                            throw new Exception("Column $k was not exists");
+                        }
+                        $v[$k] = $record[$k];
+                    }
+                }
+            } elseif (is_callable($value)) {
+                $v = call_user_func_array($value, [$record]);
+            } else {
+                if (!isset($record[$value])) {
+                    throw new Exception("Column $k was not exists");
+                }
+                $v = $record[$value];
+            }
+            $data[$record[$key]] = $v;
         }
 
         return $data;
@@ -446,7 +467,8 @@ HTML;
      */
     public function log($sql, array $params, array $error)
     {
-        if (App::instance()->get('debug')) {
+        $app = App::instance();
+        if ($app->debug()) {
             $no = -1;
             $params = array_merge($params, []);
             $this->logs[] = preg_replace_callback('/(?<qm>\?)|(?<p>:\w+)/', function($match) use (&$no, $params) {
@@ -462,7 +484,9 @@ HTML;
             if ('00000' !== $error[0]) {
                 $this->errors[] = $error;
 
-                $this->dumpError(true);
+                if (!$app->get('continueOnDBError')) {
+                    $this->dumpError(true);
+                }
             }
         }
     }

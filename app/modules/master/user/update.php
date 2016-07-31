@@ -25,11 +25,13 @@ $fields = [
     'level'=>$request->get('level', $record['level']),
 ];
 
+$labels = $app->load('app/config/translations/user-labels.php');
 if ($request->isPost()) {
     $rules = [
         'name,username,password'=>'required',
     ];
-    $error = $app->service('validation', [$fields, $rules])->validate()->getError();
+    $validation = $app->service('validation', [$fields, $rules, $labels]);
+    $error = $validation->validate()->getError();
 
     if (!$error) {
         $saved = $db->update('user', $fields, $filter);
@@ -38,57 +40,32 @@ if ($request->isPost()) {
             $response->redirect($homeUrl);
         }
          else {
-            $error = 'Data gagal disimpan!'.$db->getError();
+            $error = 'Data gagal disimpan!';
         }
     }
+    $user->message('error', $error);
 }
 
-$form = $app->service('form', [$fields,[
-    'class'=>'form-horizontal'
-]]);
-$form->setDefaultControlAttrs([
+$form = $app->service('form')
+  ->setData($fields)
+  ->setLabels($labels)
+  ->setAttrs([
+    'class'=>'form-horizontal',
+  ])
+  ->setDefaultControlAttrs([
     'class'=>'form-control',
-    ]);
-
-$html = $app->service('html');
-echo $html->notify('error', $error);
+  ])
+  ->setDefaultLabelAttrs([
+    'class'=>'form-label col-md-2',
+  ])
+;
 
 $app->set('currentPath', $homeUrl);
 ?>
 <h1 class="page-header">
     Data User
-    <small>input</small>
+    <small>edit</small>
 </h1>
 
-<?php echo $form->open(); ?>
-    <div class="form-group">
-        <label for="name" class="form-label col-md-2">Name</label>
-        <div class="col-md-4">
-            <?php echo $form->text('name'); ?>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="username" class="form-label col-md-2">Username</label>
-        <div class="col-md-4">
-            <?php echo $form->text('username'); ?>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="password" class="form-label col-md-2">Password</label>
-        <div class="col-md-4">
-            <?php echo $form->password('password'); ?>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="level" class="form-label col-md-2">Level</label>
-        <div class="col-md-4">
-            <?php echo $form->select('level',['options'=>$app->get('userLevel')]); ?>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-10 col-md-offset-2">
-            <button type="submit" class="btn btn-primary">Simpan</button>
-            <a href="<?php echo $app->url($homeUrl); ?>" class="btn btn-default">Batal</a>
-        </div>
-    </div>
-</form>
+<?php
+include __DIR__.'/_form.php';

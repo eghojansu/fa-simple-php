@@ -14,9 +14,6 @@ $app->register($config);
 $config = $app->load('app/config/services.php');
 $app->registerServices($config);
 
-// show file entry on url
-$app->set('showEntryFile',true);
-
 // set default page title
 // by copying application name to pageTitle variable
 $app->copy('name', 'pageTitle');
@@ -30,6 +27,8 @@ $extension     = '.php';
 $current_path  = $app->service('request')->currentPath(true);
 // replace extension
 $current_path  = preg_replace('/'.$extension.'$/', '', $current_path);
+// remove underscore
+$current_path  = ltrim($current_path, '_');
 // ensure this is absolute path
 $current_path  = Helper::ensureAbsolute($current_path);
 // path to load, if current path exists use it otherwise use default (index page)
@@ -52,8 +51,6 @@ $app->set('content', ob_get_clean());
 
 // load template if exists
 if ($template = $app->get('template')) {
-    // nav only used in template for default
-    $app->set('nav', $app->load('app/config/nav.php'));
     ob_start();
     require $template_path.$template.$extension;
     $app->set('content', ob_get_clean());

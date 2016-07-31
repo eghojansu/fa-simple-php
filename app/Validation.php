@@ -4,6 +4,7 @@ class Validation
 {
     protected $rules;
     protected $data;
+    protected $labels;
     protected $skips;
     protected $error;
     protected $messages = [];
@@ -21,10 +22,11 @@ class Validation
      *        ]
      * @param array $skips
      */
-    public function __construct(array $data, array $rules, array $skips = [])
+    public function __construct(array $data, array $rules, array $labels = [], array $skips = [])
     {
         $this->data = $data;
         $this->rules = $rules;
+        $this->labels = $labels;
         $this->skips = $skips;
         $this->messages = [
             'required' => '{field} tidak boleh kosong',
@@ -226,8 +228,10 @@ class Validation
     public function setError($field, $value, $message, $params = null, $rule = null)
     {
         $params = preg_replace('/,\s*allowEmpty$/', '', $params);
+        $label = isset($this->labels[$field])?$this->labels[$field]:
+            ucwords(str_replace('_', ' ', $field));
         $replace = [
-            '{field}' => ucwords(preg_replace('/_(\w)/', ' \\1', $field)),
+            '{field}' => $label,
             '{value}' => $value,
             '{param}' => $params,
             '{rule}' => $rule,

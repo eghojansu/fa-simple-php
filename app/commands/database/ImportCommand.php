@@ -19,12 +19,12 @@ class ImportCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $app = App::instance()->debug();
+        $app = App::instance()->debug(true);
         $db = $app->service('database');
         $basePath = $app->get('basePath');
         $schemas = [
-            $basePath.'app/schema/1 schema.sql',
-            $basePath.'app/schema/2 user-init.sql',
+            $basePath.'app/schema/1-schema.sql',
+            $basePath.'app/schema/2-user-init.sql',
         ];
 
         foreach ($schemas as $schema) {

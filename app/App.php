@@ -16,6 +16,7 @@ class App extends Magic
         'headerOff' => false,
         // show file entry in url
         'showEntryFile'=>false,
+        'continueOnDBError'=>true,
     ];
     // default services
     protected $rules = [
@@ -95,10 +96,15 @@ class App extends Magic
 
     /**
      * Activate debug mode
+     * @return  mixed
      */
-    public function debug()
+    public function debug($status = null)
     {
-        return $this->set('debug', true);
+        if (is_null($status)) {
+            return $this->get('debug');
+        }
+
+        return $this->set('debug', $status);
     }
 
     /**
@@ -200,6 +206,7 @@ class App extends Magic
      */
     public function urlPath($path)
     {
+        $path = Helper::fixSlashes($path,false);
         $pos = strpos($path, '.');
         if (false !== $pos) {
             $path = substr($path, 0, $pos);

@@ -19,10 +19,11 @@ if ($request->isPost()) {
   $data = $db->findOne('user', $filter);
 
   if (empty($data)) {
-    $error = 'Login gagal! '.$db->getError();
+    $error = 'Login gagal!';
   } else {
     $user->login($data['level'], $data);
-    $app->service('response')->redirect('index');
+    $response = $app->service('response');
+    $response->redirect('index');
   }
 }
 ?>

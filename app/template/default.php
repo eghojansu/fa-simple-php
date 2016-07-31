@@ -1,6 +1,6 @@
 <?php
 $html = $app->service->get('html');
-$nav  = $app->get('nav');
+$nav  = $app->load('app/config/nav.php');
 $currentPath = $app->get('currentPath');
 $main_nav = $html->navbarNav($nav['main'], $currentPath);
 $account_nav = $html->navbarNav($nav['account'], $currentPath, ['appendClass'=>'navbar-right']);
@@ -54,5 +54,12 @@ $account_nav = $html->navbarNav($nav['account'], $currentPath, ['appendClass'=>'
     <div class="container">
       <?php echo $app->get('content'); ?>
     </div>
+
+    <?php
+      echo $html->notify('success', $user->message('success'));
+      echo $html->notify('error', $user->message('error'));
+      echo $html->notify('warning', $user->message('warning'));
+      echo $html->notify('info', $user->message('info'));
+    ?>
   </body>
 </html>

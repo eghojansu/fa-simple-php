@@ -9,6 +9,9 @@ $filter = [
     $app->service('request')->query('id'),
     $user->get('id'),
 ];
-$app->service('database')->delete('user', $filter);
-$user->message('success', 'Data sudah dihapus!');
-$app->service('response')->redirect($homeUrl);
+$db = $app->service('database');
+$response = $app->service('response');
+
+$db->delete('user', $filter);
+$user->message('info', 'Data sudah dihapus!');
+$response->redirect($homeUrl);

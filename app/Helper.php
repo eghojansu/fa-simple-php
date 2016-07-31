@@ -256,4 +256,19 @@ class Helper
         fclose($fp);
         exit(0);
     }
+
+    /**
+     * Render array to html attribute
+     * @param  array  $attrs
+     * @return string
+     */
+    public static function renderAttribute(array $attrs)
+    {
+        $str = '';
+        foreach ($attrs as $key => $value) {
+            $str .= ' '.(is_numeric($key)?$value:$key.'="'.$value.'"');
+        }
+
+        return $str;
+    }
 }

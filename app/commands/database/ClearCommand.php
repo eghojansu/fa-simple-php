@@ -14,7 +14,7 @@ class ClearCommand extends Command
     {
         $this
             ->setName('database:clear')
-            ->setDescription('Clearing database content')
+            ->setDescription('Clear database content')
             ->addArgument('table', InputArgument::IS_ARRAY,
                 'table to cleared, use [space] to clear multiple table')
             ;
