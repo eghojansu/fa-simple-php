@@ -42,7 +42,7 @@ class ClearCommand extends Command
         foreach ($tableToClear as $table) {
             $sql .= "delete from $table;";
         }
-        $db->pdo()->exec($sql);
+        $db->exec($sql);
         $count = count($tableToClear);
         $output->writeln("  <fg=yellow>$count table(s) cleared</>");
     }

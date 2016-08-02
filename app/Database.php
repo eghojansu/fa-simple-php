@@ -46,8 +46,8 @@ class Database
     {
         $this->pdo = null;
         $this->creating = true;
-        $this->pdo()->exec('create database if not exists '.$this->config['dsn']['dbname']);
-        $this->pdo->exec('use '.$this->config['dsn']['dbname']);
+        $this->exec('create database if not exists '.$this->config['dsn']['dbname']);
+        $this->exec('use '.$this->config['dsn']['dbname']);
 
         return $this;
     }
@@ -59,7 +59,7 @@ class Database
     {
         $this->pdo = null;
         $this->creating = true;
-        $this->pdo()->exec('drop database if exists '.$this->config['dsn']['dbname']);
+        $this->exec('drop database if exists '.$this->config['dsn']['dbname']);
         $this->pdo = null;
 
         return $this;
@@ -72,7 +72,7 @@ class Database
     public function import($file)
     {
         if ($sql = App::instance()->read($file)) {
-            $this->pdo()->exec($sql);
+            $this->exec($sql);
         }
 
         return $this;
@@ -109,6 +109,21 @@ class Database
         }
 
         return $this->pdo;
+    }
+
+    /**
+     * Exec sql
+     * @param  string $sql
+     * @return mixed
+     */
+    public function exec($sql)
+    {
+        $pdo = $this->pdo();
+        $result = $pdo->exec($sql);
+        $info = $pdo->errorInfo();
+        $this->log($sql, [], $info);
+
+        return $result;
     }
 
     /**
@@ -389,17 +404,20 @@ class Database
      */
     public function dumpLog($halt = false)
     {
-        $body = '';
-        $no = 1;
-        foreach ($this->logs as $key => $value) {
-            $body .= '<tr>'
-                . '<td>'.$no.'</td>'
-                . '<td>'.$value.'</td>'
-                . '</tr>';
-            $no++;
-        }
+        if (PHP_SAPI === 'cli') {
+            echo implode(PHP_EOL, $this->logs);
+        } else {
+            $body = '';
+            $no = 1;
+            foreach ($this->logs as $key => $value) {
+                $body .= '<tr>'
+                    . '<td>'.$no.'</td>'
+                    . '<td>'.$value.'</td>'
+                    . '</tr>';
+                $no++;
+            }
 
-        echo <<<HTML
+            echo <<<HTML
 <div class="database-log" style="padding: 10px; border-radius: 8px; border: solid 1px #ccc; margin-bottom: 10px">
     <p style="margin: 0 0 10px"><strong>Database Log</strong></p>
     <table style="width: 100%; border-collapse: collapse" border="1">
@@ -413,6 +431,7 @@ class Database
     </table>
 </div>
 HTML;
+        }
 
         if ($halt) {
             die;
@@ -425,19 +444,25 @@ HTML;
      */
     public function dumpError($halt = false)
     {
-        $body = '';
-        $no = 1;
-        foreach ($this->errors as $key => $value) {
-            $body .= '<tr>'
-                . '<td>'.$no.'</td>'
-                . '<td>'.$value[0].'</td>'
-                . '<td>'.$value[1].'</td>'
-                . '<td>'.$value[2].'</td>'
-                . '</tr>';
-            $no++;
-        }
+        if (PHP_SAPI === 'cli') {
+            $i = 1;
+            foreach ($this->errors as $error) {
+                echo ($i===1?null:PHP_EOL).'('.$error[1].') '.$error[2];
+            }
+        } else {
+            $body = '';
+            $no = 1;
+            foreach ($this->errors as $key => $value) {
+                $body .= '<tr>'
+                    . '<td>'.$no.'</td>'
+                    . '<td>'.$value[0].'</td>'
+                    . '<td>'.$value[1].'</td>'
+                    . '<td>'.$value[2].'</td>'
+                    . '</tr>';
+                $no++;
+            }
 
-        echo <<<HTML
+            echo <<<HTML
 <div class="database-error" style="padding: 10px; border-radius: 8px; border: solid 1px #ccc; margin-bottom: 10px">
     <p style="margin: 0 0 10px"><strong>Database Error</strong></p>
     <table style="width: 100%; border-collapse: collapse" border="1">
@@ -453,6 +478,7 @@ HTML;
     </table>
 </div>
 HTML;
+        }
 
         if ($halt) {
             die;
@@ -485,7 +511,7 @@ HTML;
                 $this->errors[] = $error;
 
                 if (!$app->get('continueOnDBError')) {
-                    $this->dumpError(true);
+                    $this->dumpError();
                 }
             }
         }
