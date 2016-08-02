@@ -10,6 +10,7 @@ class Form
     protected $labels = [];
     protected $controlAttrs = [];
     protected $labelAttrs = [];
+    protected $labelElement = 'label';
     protected $method;
 
     /**
@@ -40,6 +41,16 @@ class Form
     public function setLabels(array $labels)
     {
         $this->labels = $labels;
+
+        return $this;
+    }
+    /**
+     * LabelElement
+     * @param array $element
+     */
+    public function setLabelElements($element)
+    {
+        $this->labelElement = $element;
 
         return $this;
     }
@@ -114,7 +125,7 @@ class Form
             'for'=>$name,
         ];
         $attrs = ($override?$attrs:$this->mergeAttribute($this->labelAttrs, $attrs))+$default;
-        $str = '<label'.$this->renderAttribute($attrs).'>'.$this->readName($name).'</label>';
+        $str = '<'.$this->labelElement.$this->renderAttribute($attrs).'>'.$this->readName($name).'</'.$this->labelElement.'>';
 
         return $str;
     }
