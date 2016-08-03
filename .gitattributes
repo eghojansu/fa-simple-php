@@ -1,4 +1,4 @@
-app/commands export-ignore
-app/console export-ignore
-composer.json
-LICENSE
+#app/commands export-ignore
+#app/console export-ignore
+#composer.json
+#LICENSE
