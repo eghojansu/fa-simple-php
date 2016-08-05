@@ -128,6 +128,22 @@ class Database
     }
 
     /**
+     * Execute sql
+     * @param  string $sql
+     * @param  array $params
+     * @return PDOStatement
+     */
+    public function execute($sql, array $params = [])
+    {
+        $query = $this->pdo()->prepare($sql);
+        $query->execute($params);
+        $info = $query->errorInfo();
+        $this->log($sql, $params, $info);
+
+        return $query;
+    }
+
+    /**
      * Get next id for table
      * @param  string $table
      * @param  string $column
