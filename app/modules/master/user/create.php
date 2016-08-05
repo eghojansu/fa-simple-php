@@ -12,11 +12,6 @@ $fields = [
     'level'=>$request->get('level'),
 ];
 $error = null;
-$filter = [
-    'id = ? and id <> ?',
-    $request->query('id'),
-    $user->get('id'),
-];
 
 $labels = $app->load('app/config/translations/user-labels.php');
 if ($request->isPost()) {

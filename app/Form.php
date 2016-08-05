@@ -113,6 +113,24 @@ class Form
     }
 
     /**
+     * Generate control element
+     * @param  string  $name
+     * @param  array   $attrs
+     * @param  boolean $override
+     * @return string
+     */
+    public function element($element, $name = null, array $attrs = [])
+    {
+        $default = [
+            'value'=>$name?(isset($this->record[$name])?$this->record[$name]:null):null,
+        ];
+        $attrs += $default;
+        $str = '<'.$element.$this->renderAttribute($attrs).'>'.$attrs['value'].'</'.$element.'>';
+
+        return $str;
+    }
+
+    /**
      * Generate control label
      * @param  string  $name
      * @param  array   $attrs
@@ -370,6 +388,7 @@ class Form
         $default = [
             'name'=>$name,
             'value'=>isset($this->record[$name])?$this->record[$name]:null,
+            'placeholder'=>$this->readName($name),
         ];
         $attrs = ($override?$attrs:$this->mergeAttribute($this->controlAttrs, $attrs))+$default;
         $value = $attrs['value'];
@@ -387,7 +406,6 @@ class Form
     {
         $default = [
             'options'=>array_flip(Helper::$months),
-            'selected'=>date('m'),
         ];
         $attrs += $default;
         $str = $this->select($name, $attrs, $override);
@@ -404,7 +422,6 @@ class Form
         $default = [
             'start'=>1,
             'end'=>5,
-            'selected'=>null,
         ];
         $attrs += $default;
         $start = $attrs['start'];

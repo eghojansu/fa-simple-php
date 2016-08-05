@@ -72,6 +72,7 @@ class Database
     public function import($file)
     {
         if ($sql = App::instance()->read($file)) {
+            // TODO: split sql to smaller chunks
             $this->exec($sql);
         }
 
