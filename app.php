@@ -1,22 +1,16 @@
 <?php
 
-// autoloader class
-require 'app/autoload.php';
-
-// instantiate main class
-$app = App::instance();
-
-// register configuration from file
-$config = $app->load('app/config/config.php');
-$app->register($config);
-
-// register services
-$config = $app->load('app/config/services.php');
-$app->registerServices($config);
+// bootstrap
+require 'app/bootstrap.php';
 
 // set default page title
 // by copying application name to pageTitle variable
 $app->copy('name', 'pageTitle');
+
+// expose some object
+$user = $app->service('user');
+$request = $app->service('request');
+$response = $app->service('response');
 
 // module path
 $module_path   = $app->get('modulePath');
@@ -24,7 +18,7 @@ $template_path = $app->get('templatePath');
 // extension
 $extension     = '.php';
 // current path
-$current_path  = $app->service('request')->currentPath(true);
+$current_path  = $request->currentPath(true);
 // replace extension
 $current_path  = preg_replace('/'.$extension.'$/', '', $current_path);
 // remove underscore
@@ -43,8 +37,12 @@ $fileToLoad    = is_file($path)?$path:$error404;
 
 // set current path
 $app->set('currentPath', $current_path);
+// set template based on user type
+if ($user->hasBeenLogin() && ($role = $user->get('role')) && file_exists($template_path.$role.$extension)) {
+    $app->set('template', $role);
+}
 
-// load main file
+// load main file, catch its content
 ob_start();
 require $fileToLoad;
 $app->set('content', ob_get_clean());
@@ -56,8 +54,8 @@ if ($template = $app->get('template')) {
     $app->set('content', ob_get_clean());
 }
 
-// set content respond then send
-$app->service('response')
+// set content response then send
+$response
     ->setContent($app->cut('content'))
     ->send()
 ;

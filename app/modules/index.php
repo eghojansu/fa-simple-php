@@ -1,7 +1,8 @@
 <?php
 
-$user = $app->service('user');
-$user->mustLogin()->orRedirect('account/login');
+if ($user->isAnonym()) {
+    $response->redirect('account/login');
+}
 
 ?>
 

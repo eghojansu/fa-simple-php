@@ -93,7 +93,7 @@ NOTIFY
             'useCaret'=>true,
         ], $option);
 
-        $role = App::instance()->service->get('user')->get('role');
+        $role = App::instance()->service('user')->get('role');
         $str = '';
         foreach ($items as $item) {
             $item += [

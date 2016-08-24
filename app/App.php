@@ -53,7 +53,7 @@ class App extends Magic
         ],
     ];
     protected $assetRoot;
-    public    $service;
+    protected $service;
     private static $instance;
 
 
@@ -63,8 +63,6 @@ class App extends Magic
      */
     public function __construct()
     {
-        $this->service = new Service;
-        $this->registerServices($this->rules);
         $this->data['modulePath'] = Helper::fixSlashes(__DIR__.'/modules/');
         $this->data['templatePath'] = Helper::fixSlashes(__DIR__.'/template/');
     }
@@ -72,7 +70,7 @@ class App extends Magic
     /**
      * Get instance
      */
-    public function instance()
+    public static function instance()
     {
         if (!self::$instance) {
             self::$instance = new self;
@@ -87,6 +85,13 @@ class App extends Magic
      */
     public function service()
     {
+        if (!$this->service) {
+            $this->service = new Service;
+            foreach ($this->rules as $key => $value) {
+                $this->service->addRule($key, $value);
+            }
+        }
+
         if ($args = func_get_args()) {
             return call_user_func_array([$this->service, 'get'], $args);
         }
@@ -105,20 +110,6 @@ class App extends Magic
         }
 
         return $this->set('debug', $status);
-    }
-
-    /**
-     * Register services
-     * @param  array  $rules
-     * @see  Level-2/Dice
-     */
-    public function registerServices(array $rules)
-    {
-        foreach ($rules as $key => $value) {
-            $this->service->addRule($key, $value);
-        }
-
-        return $this;
     }
 
     /**

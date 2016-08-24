@@ -1,5 +1,5 @@
 <?php
-$html = $app->service->get('html');
+$html = $app->service('html');
 $nav  = $app->load('app/config/nav.php');
 $currentPath = $app->get('currentPath');
 $main_nav = $html->navbarNav($nav['main'], $currentPath);
@@ -12,18 +12,19 @@ $account_nav = $html->navbarNav($nav['account'], $currentPath, ['appendClass'=>'
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?php echo $app->get('pageTitle'); ?></title>
-    <link href="<?php echo $app->asset('public/css/bootstrap.united-theme.min.css'); ?>" rel="stylesheet">
-    <link href="<?php echo $app->asset('public/css/bootstrap-datepicker3.min.css'); ?>" rel="stylesheet">
-    <link href="<?php echo $app->asset('public/css/style.css'); ?>" rel="stylesheet">
+    <link href="<?php echo $app->asset('asset/css/bootstrap.min.css'); ?>" rel="stylesheet">
+    <link href="<?php echo $app->asset('asset/css/font-awesome.min.css'); ?>" rel="stylesheet">
+    <link href="<?php echo $app->asset('asset/css/bootstrap-datepicker3.min.css'); ?>" rel="stylesheet">
+    <link href="<?php echo $app->asset('asset/css/style.css'); ?>" rel="stylesheet">
 
-    <script src="<?php echo $app->asset('public/js/jquery.min.js'); ?>"></script>
-    <script src="<?php echo $app->asset('public/js/bootstrap.min.js'); ?>"></script>
-    <script src="<?php echo $app->asset('public/js/bootstrap-datepicker.min.js'); ?>"></script>
-    <script src="<?php echo $app->asset('public/js/bootstrap-datepicker.id.min.js'); ?>"></script>
-    <script src="<?php echo $app->asset('public/js/notify.min.js'); ?>"></script>
-    <script src="<?php echo $app->asset('public/js/bootbox.min.js'); ?>"></script>
-    <script src="<?php echo $app->asset('public/js/autonumeric.js'); ?>"></script>
-    <script src="<?php echo $app->asset('public/js/script.js'); ?>"></script>
+    <script src="<?php echo $app->asset('asset/js/jquery.min.js'); ?>"></script>
+    <script src="<?php echo $app->asset('asset/js/bootstrap.min.js'); ?>"></script>
+    <script src="<?php echo $app->asset('asset/js/bootstrap-datepicker.min.js'); ?>"></script>
+    <script src="<?php echo $app->asset('asset/js/bootstrap-datepicker.id.min.js'); ?>"></script>
+    <script src="<?php echo $app->asset('asset/js/notify.min.js'); ?>"></script>
+    <script src="<?php echo $app->asset('asset/js/bootbox.min.js'); ?>"></script>
+    <script src="<?php echo $app->asset('asset/js/autonumeric.js'); ?>"></script>
+    <script src="<?php echo $app->asset('asset/js/script.js'); ?>"></script>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>

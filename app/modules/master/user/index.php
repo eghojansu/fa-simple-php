@@ -1,9 +1,9 @@
 <?php
 
-$user = $app->service('user');
-$user->mustLogin()->orRedirect('index');
+if ($user->isAnonym()) {
+    $response->redirect('account/login');
+}
 
-$request = $app->service('request');
 $db = $app->service('database');
 $filter = ['id <> :self', ':self'=>$user->get('id')];
 if ($keyword = $request->query('keyword')) {
@@ -22,28 +22,31 @@ $html = $app->service('html');
 ?>
 <h1 class="page-header">Data User</h1>
 
+
+<div class="data-control clearfix">
+    <div class="btn-group pull-right">
+        <a class="btn btn-primary" href="<?php echo $app->url($createUrl); ?>" data-toggle="tooltip" title="Data baru"><i class="fa fa-pencil-square-o"></i> Data Baru</a>
+    </div>
+
+    <form class="form-inline">
+        <div class="form-group">
+            <label for="keyword" class="sr-only">Keyword</label>
+            <input type="text" name="keyword" class="form-control" value="<?php echo $keyword; ?>" placeholder="name or username">
+        </div>
+        <button type="submit" class="btn btn-info">Search</button>
+    </form>
+</div>
 <?php echo $html->pagination($subset, ['route'=>$homeUrl]); ?>
 
-<form class="form-inline">
-    <div class="form-group">
-        <label for="keyword" class="sr-only">Keyword</label>
-        <input type="text" name="keyword" class="form-control" value="<?php echo $keyword; ?>" placeholder="name or username">
-    </div>
-    <button type="submit" class="btn btn-info">Search</button>
-</form>
 
-<hr>
-
-<table class="table table-bordered table-condensed table-striped table-hover">
+<table class="table table-bordered table-condensed table-striped table-hover first-no last-control">
     <thead>
         <tr>
             <th>No</th>
             <th>Name</th>
             <th>Username</th>
             <th>Level</th>
-            <th>
-                <a class="text-primary" href="<?php echo $app->url($createUrl); ?>" data-toggle="tooltip" title="Data baru"><span class="glyphicon glyphicon-plus-sign"></span></a>
-            </th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -55,9 +58,9 @@ $html = $app->service('html');
                     <td><?php echo $row['username']; ?></td>
                     <td><?php echo $row['level']; ?></td>
                     <td>
-                        <a class="text-warning" href="<?php echo $app->url($detailUrl, ['id'=>$row['id']]); ?>" data-toggle="tooltip" title="Detail"><span class="glyphicon glyphicon-eye-open"></span></a>
-                        <a class="text-success" href="<?php echo $app->url($updateUrl, ['id'=>$row['id']]); ?>" data-toggle="tooltip" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
-                        <a data-confirm="delete" class="text-danger" href="<?php echo $app->url($deleteUrl, ['id'=>$row['id']]); ?>" data-toggle="tooltip" title="Delete"><span class="glyphicon glyphicon-remove-sign"></span></a>
+                        <a class="btn btn-xs btn-warning" href="<?php echo $app->url($detailUrl, ['id'=>$row['id']]); ?>" data-toggle="tooltip" title="Detail"><i class="fa fa-info"></i></a>
+                        <a class="btn btn-xs btn-success" href="<?php echo $app->url($updateUrl, ['id'=>$row['id']]); ?>" data-toggle="tooltip" title="Edit"><i class="fa fa-pencil"></i></a>
+                        <a data-confirm="delete" class="btn btn-xs btn-danger" href="<?php echo $app->url($deleteUrl, ['id'=>$row['id']]); ?>" data-toggle="tooltip" title="Delete"><i class="fa fa-trash"></i></a>
                     </td>
                 </tr>
             <?php endforeach; ?>

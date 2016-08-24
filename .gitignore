@@ -1,6 +1,6 @@
 # app/console
 # app/commands/
-dev/*
+dev/notes/*
 public/uploads/*
 public/avatars/*
 vendor/

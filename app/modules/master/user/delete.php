@@ -1,10 +1,9 @@
 <?php
 
-$user = $app->service('user');
-$user->mustLogin()->orRedirect('index');
+if ($user->isAnonym()) {
+    $response->redirect('account/login');
+}
 
-$request = $app->service('request');
-$response = $app->service('response');
 $db = $app->service('database');
 
 $homeUrl = $app->urlPath(__DIR__);

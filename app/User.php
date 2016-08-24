@@ -19,15 +19,6 @@ class User extends Magic
     }
 
     /**
-     * Check user was login
-     * @return bool
-     */
-    public function wasLogin()
-    {
-        return $this->get('login');
-    }
-
-    /**
      * login user
      * @param  string $role
      * @param  array  $data
@@ -72,54 +63,36 @@ class User extends Magic
     }
 
     /**
+     * Check user was login
+     * @return bool
+     */
+    public function hasBeenLogin()
+    {
+        return $this->get('login');
+    }
+
+    /**
      * check user is login
      */
-    public function mustLogin()
+    public function isAnonym()
     {
-        $this->redirectOK = !$this->wasLogin();
-
-        return $this;
+        return !$this->hasBeenLogin();
     }
 
     /**
-     * check user is anonym
+     * Check user role, can be used to check multiple role
+     *
+     * @param  string|string[]  $role
+     * @return boolean
      */
-    public function mustAnonym()
+    public function is($role)
     {
-        $this->redirectOK = $this->wasLogin();
+        $currentRole = $this->get('role');
+        $roles = is_array($role) ? $role : explode(',', $role);
+        $currentRoles = is_array($currentRole) ? $currentRole : explode(',', $currentRole);
+        $intersection = array_intersect($roles, $currentRoles);
 
-        return $this;
-    }
-
-    /**
-     * check user role was equal
-     */
-    public function must($role)
-    {
-        $ok = false;
-        if (is_array($role)) {
-            foreach ($role as $r) {
-                $ok |= $this->is('role', $r);
-            }
-        } else {
-            $ok = $this->is('role', $role);
-        }
-        $this->redirectOK = !$ok;
-
-        return $this;
-    }
-
-    /**
-     * Redirect
-     * @see  Response::redirect
-     */
-    public function orRedirect()
-    {
-        if ($this->redirectOK) {
-            call_user_func_array([App::instance()->service->get('response'),'redirect'], func_get_args());
-        }
-
-        return $this;
+        return !empty($intersection);
     }
 
     protected function &getPool()

@@ -6,22 +6,6 @@ require __DIR__.'/../vendor/autoload.php';
 use Symfony\Component\Console\Application;
 use Symfony\Component\Finder\Finder;
 
-// main app class
-$app = App::instance();
-
-$basePath = realpath(__DIR__.'/..').'/';
-
-// set current base path
-$app->set('basePath', $basePath);
-
-// register configuration from file
-$config = $app->load($basePath.'app/config/config.php');
-$app->register($config);
-
-// register services
-$config = $app->load($basePath.'app/config/services.php');
-$app->registerServices($config);
-
 // -----------------------------------------------------------------------------
 
 $app = new Application;

@@ -1,10 +1,10 @@
 <?php
 
-$user = $app->service('user');
-$user->mustAnonym()->orRedirect('index');
+if ($user->hasBeenLogin()) {
+  $response->redirect('index');
+}
 $app->clear('template');
 
-$request  = $app->service('request');
 $username = $request->get('username');
 $password = $request->get('password');
 $error    = null;
@@ -22,7 +22,6 @@ if ($request->isPost()) {
     $error = 'Login gagal!';
   } else {
     $user->login($data['level'], $data);
-    $response = $app->service('response');
     $response->redirect('index');
   }
 }
@@ -34,8 +33,9 @@ if ($request->isPost()) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login</title>
-    <link href="<?php echo $app->asset('public/css/bootstrap.united-theme.min.css'); ?>" rel="stylesheet">
-    <link href="<?php echo $app->asset('public/css/style.css'); ?>" rel="stylesheet">
+    <link href="<?php echo $app->asset('asset/css/bootstrap.min.css'); ?>" rel="stylesheet">
+    <link href="<?php echo $app->asset('asset/css/font-awesome.min.css'); ?>" rel="stylesheet">
+    <link href="<?php echo $app->asset('asset/css/style.css'); ?>" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -45,7 +45,7 @@ if ($request->isPost()) {
     <![endif]-->
   </head>
   <body>
-    <div class="fillbg"><img src="<?php echo $app->asset('public/images/bg.jpg'); ?>"></div>
+    <div class="fillbg"><img src="<?php echo $app->asset('asset/images/bg.jpg'); ?>"></div>
     <div class="container-login">
       <form method="post" id="login-form">
         <h1 class="page-title">Login</h1>
@@ -56,7 +56,7 @@ if ($request->isPost()) {
         <?php endif; ?>
         <div class="form-group">
           <label for="username" class="sr-only">Username</label>
-          <input type="text" name="username" value="<?php echo $username; ?>" class="form-control form-block" placeholder="username">
+          <input type="text" name="username" value="<?php echo $username; ?>" class="form-control form-block" placeholder="username" autofocus>
         </div>
         <div class="form-group">
           <label for="password" class="sr-only">Password</label>

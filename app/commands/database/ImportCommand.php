@@ -25,6 +25,7 @@ class ImportCommand extends Command
         $schemas = [
             $basePath.'app/schema/1-schema.sql',
             $basePath.'app/schema/2-user-init.sql',
+            $basePath.'app/schema/3-dummy-data.sql',
         ];
 
         foreach ($schemas as $schema) {

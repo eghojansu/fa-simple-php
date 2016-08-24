@@ -1,9 +1,9 @@
 <?php
 
-$user = $app->service('user');
-$user->mustLogin()->orRedirect('index');
+if ($user->isAnonym()) {
+    $response->redirect('account/login');
+}
 
-$request = $app->service('request');
 $filter = [];
 if ($keyword = $request->query('keyword')) {
     $filter = [

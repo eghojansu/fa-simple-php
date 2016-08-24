@@ -1,9 +1,9 @@
 <?php
 
-$user = $app->service('user');
-$user->mustLogin()->orRedirect('index');
+if ($user->isAnonym()) {
+    $response->redirect('account/login');
+}
 
-$request = $app->service('request');
 $homeUrl = $app->urlPath(__DIR__);
 $fields = [
     'name'=>$request->get('name'),
@@ -26,7 +26,6 @@ if ($request->isPost()) {
         $saved = $db->insert('user', $fields);
         if ($saved) {
             $user->message('success', 'Data sudah disimpan!');
-            $response = $app->service('response');
             $response->redirect($homeUrl);
         }
          else {

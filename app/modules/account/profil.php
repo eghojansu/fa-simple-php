@@ -1,9 +1,10 @@
 <?php
 
 $user = $app->service('user');
-$user->mustLogin()->orRedirect('index');
+if ($user->isAnonym()) {
+    $response->redirect('account/login');
+}
 
-$request  = $app->service('request');
 $db       = $app->service('database');
 $fields = [
   'username'=>$request->get('username', $user->get('username')),
@@ -28,7 +29,7 @@ if ($request->isPost()) {
 
   if (!$error) {
     // handle file
-    $filename = $request->baseDir().'public/avatars/user-'.$user->get('id');
+    $filename = $request->baseDir().'asset/avatars/user-'.$user->get('id');
     if (Helper::handleFileUpload('avatar', $filename, $app->get('imageTypes'))) {
       $fields['avatar'] = basename($filename);
     }
@@ -46,7 +47,6 @@ if ($request->isPost()) {
     if ($saved) {
       $user->register($fields);
       $user->message('success', 'Data sudah diupdate');
-      $response = $app->service('response');
       $response->redirect($selfUrl);
     }
     else {
@@ -58,7 +58,7 @@ if ($request->isPost()) {
 }
 
 $avatar = $user->get('avatar');
-$avatar = $app->asset($avatar?'public/avatars/'.$avatar:'public/images/avatar.png');
+$avatar = $app->asset($avatar?'asset/avatars/'.$avatar:'asset/images/avatar.png');
 
 $form = $app->service('form')
   ->setData($fields)

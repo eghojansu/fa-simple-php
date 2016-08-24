@@ -1,9 +1,9 @@
 <?php
 
-$user = $app->service('user');
-$user->mustLogin()->orRedirect('index');
+if ($user->isAnonym()) {
+    $response->redirect('account/login');
+}
 
-$request = $app->service('request');
 $db = $app->service('database');
 $homeUrl = $app->urlPath(__DIR__);
 $filter = [
@@ -14,7 +14,6 @@ $filter = [
 $record = $db->findOne('user', $filter);
 if (empty($record)) {
     $user->message('error', 'Data tidak ditemukan');
-    $response = $app->service('response');
     $response->redirect($homeUrl);
 }
 

@@ -1,11 +1,14 @@
 {
 	"name": "eghojansu/fa-simple-php",
 	"description": "Semi OOP PHP Framework",
-	"keywords": ["php","framework","procedural"],
+	"keywords": ["php","framework","procedural","oop"],
 	"author": {
 		"name": "Eko Kurniawan",
 		"email": "ekokurniawanbs@gmail.com",
 		"role": "developer"
+	},
+	"support": {
+		"email": "ekokurniawanbs@gmail.com"
 	},
 	"type": "project",
 	"licence": "MIT",
@@ -17,9 +20,6 @@
 		"symfony/console": "^3.1"
 	},
 	"autoload-dev": {
-		"files": ["app/autoload.php"]
-	},
-	"support": {
-		"email": "ekokurniawanbs@gmail.com"
+		"files": ["app/bootstrap.php"]
 	}
 }
