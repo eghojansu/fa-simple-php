@@ -1,61 +1,79 @@
 <?php
 
+use app\Helper;
+use app\Request;
+use app\Response;
+
 // bootstrap
 require 'app/bootstrap.php';
 
-// set default page title
-// by copying application name to pageTitle variable
-$app->copy('name', 'pageTitle');
+// current path, underscore removed, and its an absolute path
+$current_path = $app->service(Request::class)->currentPath(true);
+    $current_path = str_replace('_', '', $current_path);
+    $current_path = Helper::ensureAbsolute($current_path);
 
-// expose some object
-$user = $app->service('user');
-$request = $app->service('request');
-$response = $app->service('response');
-
-// module path
-$module_path   = $app->get('modulePath');
-$template_path = $app->get('templatePath');
-// extension
-$extension     = '.php';
-// current path
-$current_path  = $request->currentPath(true);
-// replace extension
-$current_path  = preg_replace('/'.$extension.'$/', '', $current_path);
-// remove underscore
-$current_path  = ltrim($current_path, '_');
-// ensure this is absolute path
-$current_path  = Helper::ensureAbsolute($current_path);
-// path to load, if current path exists use it otherwise use default (index page)
-// then, if that path exists assume that path should be served with index page
-// otherwise use plain path and concat with extension
-$path          = $module_path.($current_path?:'index');
-$path          = (file_exists($path)?$path.'/index':$path).$extension;
-// not found file
-$error404      = $template_path.'not-found'.$extension;
-// file to load
-$fileToLoad    = is_file($path)?$path:$error404;
-
-// set current path
-$app->set('currentPath', $current_path);
-// set template based on user type
-if ($user->hasBeenLogin() && ($role = $user->get('role')) && file_exists($template_path.$role.$extension)) {
-    $app->set('template', $role);
+// handling request
+$namespace = 'app\\module\\';
+$suffix = 'Controller';
+$defaultController = 'Index'.$suffix;
+$defaultMethod = 'main';
+$errorHandler = $namespace.'Error'.$suffix;
+$segments = explode('/', $current_path);
+    $segments = array_filter($segments);
+if ($segments) {
+    // handle it, support two-depth controller location
+    if (class_exists($class = $namespace.$segments[0].$suffix)
+        || class_exists($class = $namespace.$segments[0].'\\'.$segments[0].$suffix)
+    ) {
+        array_shift($segments);
+        $method = $segments?array_shift($segments):$defaultMethod;
+    } elseif (isset($segments[1]) && class_exists($class = $namespace.$segments[0].'\\'.$segments[1].$suffix)) {
+        array_shift($segments);
+        array_shift($segments);
+        $method = $segments?array_shift($segments):$defaultMethod;
+    } else {
+        $class = $errorHandler;
+        $method = 'notFound';
+    }
+    $args = $segments;
+} else {
+    // use default
+    $class = $namespace.$defaultController;
+    $method = $defaultMethod;
+    $args = [];
 }
 
-// load main file, catch its content
-ob_start();
-require $fileToLoad;
-$app->set('content', ob_get_clean());
-
-// load template if exists
-if ($template = $app->get('template')) {
-    ob_start();
-    require $template_path.$template.$extension;
-    $app->set('content', ob_get_clean());
+// fix method
+if (false === method_exists($class, $method)) {
+    array_unshift($args, $method);
+    $method = $defaultMethod;
 }
 
-// set content response then send
-$response
-    ->setContent($app->cut('content'))
-    ->send()
-;
+// check method visibility
+$mref = new ReflectionMethod($class, $method);
+if (false === $mref->isPublic()) {
+    // invalid method
+    $class = $errorHandler;
+    $method = 'notAllowed';
+}
+
+// controller construction
+// construct
+$instance = $app->service($class);
+$response = true;
+if (method_exists($instance, 'beforeRoute')) {
+    $response = $app->call($instance, 'beforeRoute', $args);
+}
+if (true === $response || null === $response) {
+    $response = $app->call($instance, $method, $args);
+}
+if (method_exists($instance, 'afterRoute')) {
+    $response = $app->call($instance, 'afterRoute', $args);
+}
+
+if ($response instanceof Response) {
+    // send response
+    $response->send();
+} else {
+    echo "Invalid response!";
+}

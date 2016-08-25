@@ -1,19 +1,20 @@
 <?php
 
-namespace commands\database;
+namespace app\command\database;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use App;
+use app\App;
+use app\Database;
 
 class ClearCommand extends Command
 {
     public function configure()
     {
         $this
-            ->setName('database:clear')
+            ->setName('db:clear')
             ->setDescription('Clear database content')
             ->addArgument('table', InputArgument::IS_ARRAY,
                 'table to cleared, use [space] to clear multiple table')
@@ -37,7 +38,7 @@ class ClearCommand extends Command
             $tableToClear = $tables;
         }
 
-        $db = App::instance()->service('database');
+        $db = App::instance()->service(Database::class);
         $sql = '';
         foreach ($tableToClear as $table) {
             $sql .= "delete from $table;";

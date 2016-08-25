@@ -21,9 +21,6 @@ return [
     'debug'=>true,
     'continueOnDBError'=>false,
 
-    // template
-    'template' => 'default',
-
     // session name
     'session' => 'Fa-SP',
 

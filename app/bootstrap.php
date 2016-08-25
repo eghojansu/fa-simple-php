@@ -1,11 +1,15 @@
 <?php
 
+use app\App;
+use app\Database;
+use app\Loader;
+
 // require loader
 require __DIR__.'/Loader.php';
 
 $loader = new Loader;
 $loader
-    ->add(__DIR__)
+    ->add(dirname(__DIR__))
     ->register()
 ;
 
@@ -18,13 +22,11 @@ $app->register($config);
 
 $database = $app->load(__DIR__.'/config/database.php');
 $rules = [
-    'database' => [
-        'instanceOf'=>'Database',
+    Database::class => [
         'constructParams'=>[$database],
         'shared'=>true,
     ],
-    // 'breadcrumb' => [
-    //     'instanceOf'=>'Breadcrumb',
+    // app\Breadcrumb::class => [
     //     'shared'=>true,
     //     'constructParams'=>[
     //      '<svg class="glyph stroked home"><use xlink:href="#stroked-home"></use></svg>',

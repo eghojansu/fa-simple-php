@@ -1,18 +1,19 @@
 <?php
 
-namespace commands\database;
+namespace app\command\database;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use App;
+use app\App;
+use app\Database;
 
 class ImportCommand extends Command
 {
     public function configure()
     {
         $this
-            ->setName('database:import')
+            ->setName('db:import')
             ->setDescription('Import schema')
             ;
     }
@@ -20,7 +21,7 @@ class ImportCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $app = App::instance()->debug(true);
-        $db = $app->service('database');
+        $db = $app->service(Database::class);
         $basePath = $app->get('basePath');
         $schemas = [
             $basePath.'app/schema/1-schema.sql',

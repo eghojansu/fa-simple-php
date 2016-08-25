@@ -7,7 +7,7 @@ return [
     'main' => [
         [
             'label' => 'Beranda',
-            'path' => 'index',
+            'path' => '/',
         ],
         [
             'label' => 'Master',

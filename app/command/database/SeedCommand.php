@@ -1,18 +1,20 @@
 <?php
 
-namespace commands\database;
+namespace app\command\database;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use App;
+use app\App;
+use app\BatchInsert;
+use app\Database;
 
 class SeedCommand extends Command
 {
     public function configure()
     {
         $this
-            ->setName('database:seed')
+            ->setName('db:seed')
             ->setDescription('Seed database content')
             ;
     }
@@ -20,7 +22,7 @@ class SeedCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $app = App::instance()->debug(true);
-        $db = $app->service('database');
+        $db = $app->service(Database::class);
         $recordInserted = 0;
         $tableCounter = 0;
 
@@ -28,7 +30,7 @@ class SeedCommand extends Command
 
         // insert user
         $tableCounter++;
-        $batch = $app->service('batchInsert', ['user']);
+        $batch = $app->service(BatchInsert::class, ['user']);
         $db->pdo()->exec('alter table user auto_increment = 1');
         for ($i=0; $i < 100; $i++) {
             $data = [];

@@ -1,5 +1,10 @@
 <?php
 
+namespace app;
+
+use PDO;
+use Exception;
+
 /**
  * Database
  *

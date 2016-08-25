@@ -1,5 +1,9 @@
 <?php
 
+namespace app;
+
+use ReflectionMethod;
+
 /**
  * Main application class
  *
@@ -7,6 +11,9 @@
  */
 class App extends Magic
 {
+    const PACKAGE = 'eghojansu/fa-simple-php';
+    const VERSION = '2.0.0';
+
     protected $data = [
         // hold output
         'quiet' => false,
@@ -20,52 +27,26 @@ class App extends Magic
     ];
     // default services
     protected $rules = [
-        'html' => [
-            'instanceOf'=>'HTML',
+        HTML::class => [
             'shared'=>true,
         ],
-        'request' => [
-            'instanceOf'=>'Request',
+        Request::class => [
             'shared'=>true,
         ],
-        'response' => [
-            'instanceOf'=>'Response',
+        Response::class => [
             'shared'=>true,
         ],
-        'user' => [
-            'instanceOf'=>'User',
+        User::class => [
             'shared'=>true,
         ],
-        'model' => [
-            'instanceOf'=>'Model',
-            'shared'=>true,
-            'substitutions'=>['Database'=>['instance'=>'database']]
-        ],
-        'validation' => [
-            'instanceOf'=>'Validation',
-        ],
-        'form' => [
-            'instanceOf'=>'Form',
-        ],
-        'batchInsert' => [
-            'instanceOf'=>'BatchInsert',
-            'substitutions'=>['Database'=>['instance'=>'database']]
+        BatchInsert::class => [
+            'substitutions'=>['Database'=>['instance'=>Database::class]]
         ],
     ];
     protected $assetRoot;
     protected $service;
     private static $instance;
 
-
-    /**
-     * Construct
-     * @return Service
-     */
-    public function __construct()
-    {
-        $this->data['modulePath'] = Helper::fixSlashes(__DIR__.'/modules/');
-        $this->data['templatePath'] = Helper::fixSlashes(__DIR__.'/template/');
-    }
 
     /**
      * Get instance
@@ -154,9 +135,10 @@ class App extends Magic
      *                        if param not exists in path, it will be appended
      *                        as query
      * @param  array  $params
+     * @param  boolean $absolute
      * @return string
      */
-    public function url($path = null, array $params = [])
+    public function url($path = null, array $params = [], $absolute = false)
     {
         $pattern = '/\{(\w+)\}/';
         if (preg_match_all($pattern, $path, $matches)) {
@@ -168,9 +150,11 @@ class App extends Magic
             $path = str_replace($matches[0], $replace, $path);
         }
 
-        $url  = ($path?$this->service->get('request')->baseUrl():
-                    $this->service->get('request')->currentUrl())
-              . ltrim($path, '/')
+        $request = $this->service(Request::class);
+        $url = $absolute ?
+            ($path?$request->baseUrl():$request->currentUrl()):
+            ($path?$request->basePath():$request->currentPath(!$this->data['showEntryFile']));
+        $url  .= ltrim($path, '/')
               . ($params?'?'.http_build_query($params):'');
 
         return $url;
@@ -184,26 +168,44 @@ class App extends Magic
     public function asset($path)
     {
         if (empty($this->assetRoot)) {
-            $this->assetRoot = $this->service->get('request')->basePath();
+            $this->assetRoot = $this->service(Request::class)->basePath();
         }
 
         return $this->assetRoot.ltrim($path, '/');
     }
 
     /**
-     * Get path
-     * @param  string $path
-     * @return string
+     * Return data
+     *
+     * @return array
      */
-    public function urlPath($path)
+    public function data()
     {
-        $path = Helper::fixSlashes($path,false);
-        $pos = strpos($path, '.');
-        if (false !== $pos) {
-            $path = substr($path, 0, $pos);
-        }
+        return $this->data;
+    }
 
-        return str_replace($this->data['modulePath'], '', $path);
+    /**
+     * Call object method
+     *
+     * @param  object $object
+     * @param  string $method
+     * @param  array  $args
+     * @return mixed
+     */
+    public function call($object, $method, array $args)
+    {
+        $mref = new ReflectionMethod($object, $method);
+        $params = $mref->getParameters();
+        $newArgs = [];
+        foreach ($params as $key => $param) {
+            $pclass = $param->getClass();
+            $newArgs[] = $pclass?
+                $this->service($pclass->name):
+                ($args ? array_shift($args) : $param->getDefaultValue());
+        }
+        $args = array_merge($newArgs, $args);
+
+        return call_user_func_array([$object, $method], $args);
     }
 
     protected function &getPool()

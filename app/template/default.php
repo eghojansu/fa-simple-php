@@ -1,7 +1,8 @@
 <?php
-$html = $app->service('html');
-$nav  = $app->load('app/config/nav.php');
-$currentPath = $app->get('currentPath');
+$nav  = $this->app->load('app/config/nav.php');
+$currentPath = $this->app->get('currentPath');
+$html = $this->html;
+$user = $this->user;
 $main_nav = $html->navbarNav($nav['main'], $currentPath);
 $account_nav = $html->navbarNav($nav['account'], $currentPath, ['appendClass'=>'navbar-right']);
 ?>
@@ -11,20 +12,20 @@ $account_nav = $html->navbarNav($nav['account'], $currentPath, ['appendClass'=>'
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?php echo $app->get('pageTitle'); ?></title>
-    <link href="<?php echo $app->asset('asset/css/bootstrap.min.css'); ?>" rel="stylesheet">
-    <link href="<?php echo $app->asset('asset/css/font-awesome.min.css'); ?>" rel="stylesheet">
-    <link href="<?php echo $app->asset('asset/css/bootstrap-datepicker3.min.css'); ?>" rel="stylesheet">
-    <link href="<?php echo $app->asset('asset/css/style.css'); ?>" rel="stylesheet">
+    <title><?php echo $this->app->get('pageTitle'); ?></title>
+    <link href="<?php echo $this->app->asset('asset/css/bootstrap.min.css'); ?>" rel="stylesheet">
+    <link href="<?php echo $this->app->asset('asset/css/font-awesome.min.css'); ?>" rel="stylesheet">
+    <link href="<?php echo $this->app->asset('asset/css/bootstrap-datepicker3.min.css'); ?>" rel="stylesheet">
+    <link href="<?php echo $this->app->asset('asset/css/style.css'); ?>" rel="stylesheet">
 
-    <script src="<?php echo $app->asset('asset/js/jquery.min.js'); ?>"></script>
-    <script src="<?php echo $app->asset('asset/js/bootstrap.min.js'); ?>"></script>
-    <script src="<?php echo $app->asset('asset/js/bootstrap-datepicker.min.js'); ?>"></script>
-    <script src="<?php echo $app->asset('asset/js/bootstrap-datepicker.id.min.js'); ?>"></script>
-    <script src="<?php echo $app->asset('asset/js/notify.min.js'); ?>"></script>
-    <script src="<?php echo $app->asset('asset/js/bootbox.min.js'); ?>"></script>
-    <script src="<?php echo $app->asset('asset/js/autonumeric.js'); ?>"></script>
-    <script src="<?php echo $app->asset('asset/js/script.js'); ?>"></script>
+    <script src="<?php echo $this->app->asset('asset/js/jquery.min.js'); ?>"></script>
+    <script src="<?php echo $this->app->asset('asset/js/bootstrap.min.js'); ?>"></script>
+    <script src="<?php echo $this->app->asset('asset/js/bootstrap-datepicker.min.js'); ?>"></script>
+    <script src="<?php echo $this->app->asset('asset/js/bootstrap-datepicker.id.min.js'); ?>"></script>
+    <script src="<?php echo $this->app->asset('asset/js/notify.min.js'); ?>"></script>
+    <script src="<?php echo $this->app->asset('asset/js/bootbox.min.js'); ?>"></script>
+    <script src="<?php echo $this->app->asset('asset/js/autonumeric.js'); ?>"></script>
+    <script src="<?php echo $this->app->asset('asset/js/script.js'); ?>"></script>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -42,7 +43,7 @@ $account_nav = $html->navbarNav($nav['account'], $currentPath, ['appendClass'=>'
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="<?php echo $app->url(); ?>"><?php echo $app->get('alias'); ?></a>
+          <a class="navbar-brand" href="<?php echo $this->app->url(); ?>"><?php echo $this->app->get('alias'); ?></a>
         </div>
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -53,7 +54,7 @@ $account_nav = $html->navbarNav($nav['account'], $currentPath, ['appendClass'=>'
     </nav>
 
     <div class="container">
-      <?php echo $app->get('content'); ?>
+      <?php echo $_content; ?>
     </div>
 
     <?php

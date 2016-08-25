@@ -1,25 +1,26 @@
 <?php
 
-namespace commands\database;
+namespace app\command\database;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use App;
+use app\App;
+use app\Database;
 
 class DropCommand extends Command
 {
     public function configure()
     {
         $this
-            ->setName('database:drop')
+            ->setName('db:drop')
             ->setDescription('Drop database')
             ;
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $db = App::instance()->service('database');
+        $db = App::instance()->service(Database::class);
         $db->drop();
 
         $output->writeln("  <fg=yellow>Database dropped</>");

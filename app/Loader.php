@@ -1,5 +1,7 @@
 <?php
 
+namespace app;
+
 /**
  * Inspired by Composer/ClassLoader
  */
@@ -46,7 +48,7 @@ class Loader
     public function loadClass($class)
     {
         if ($file = $this->findFile($class)) {
-            includeFile($file);
+            require $file;
 
             return true;
         }
@@ -60,25 +62,21 @@ class Loader
      */
     protected function findFile($class)
     {
-        $class = ltrim($class, '\\');
-        $file = str_replace('\\', '/', $class);
-        $ext = '.php';
+        $class = ltrim(strtr($class, '\\', '/'), '/').'.php';
         foreach ($this->dirs as $dir) {
-            if (is_readable($f = $dir.$file.$ext) || is_readable($f = $dir.strtolower($file).$ext)) {
-                return $f;
+            $file = $dir.$class;
+            if (is_file($file)) {
+                return $file;
+            } else {
+                $lowerfile = strtolower($file);
+                foreach (glob(dirname($file).'/*.php') as $file) {
+                    if ($lowerfile === strtolower($file)) {
+                        return $file;
+                    }
+                }
             }
         }
 
         return false;
     }
-}
-
-/**
- * Scope isolated include.
- *
- * Prevents access to $this/self from included files.
- */
-function includeFile($file)
-{
-    include $file;
 }

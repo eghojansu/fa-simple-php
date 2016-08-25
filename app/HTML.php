@@ -1,5 +1,7 @@
 <?php
 
+namespace app;
+
 /**
  * HTML Helper
  */
@@ -93,7 +95,8 @@ NOTIFY
             'useCaret'=>true,
         ], $option);
 
-        $role = App::instance()->service('user')->get('role');
+        $app = App::instance();
+        $role = $app->service(User::class)->get('role');
         $str = '';
         foreach ($items as $item) {
             $item += [
@@ -134,7 +137,7 @@ NOTIFY
                         $activeFromChild = $childActive;
                         $active = $activeFromChild;
                     }
-                    $url = '#'===$child['path']?'#':App::instance()->url($child['path']);
+                    $url = '#'===$child['path']?'#':$app->url($child['path']);
                     $strChild .= '<li'
                               . $this->renderAttributes($childAttr, ['class'=>$childActive?'active':''])
                               . '>'
@@ -164,7 +167,7 @@ NOTIFY
             if (count($item['items']) && 0 === $childCounter) {
                 continue;
             }
-            $url = '#'===$item['path']?'#':App::instance()->url($item['path']);
+            $url = '#'===$item['path']?'#':$app->url($item['path']);
             $str .= '<li'
                  . $this->renderAttributes($parentAttr, ['class'=>$active?'active':''])
                  . '>'

@@ -1,5 +1,7 @@
 <?php
 
+namespace app;
+
 /**
  * Response helper
  */
@@ -16,6 +18,23 @@ class Response
     public function addHeader($name, $content = null)
     {
         $this->headers[$name] = $content;
+
+        return $this;
+    }
+
+    /**
+     * Add headers
+     * @param array $headers
+     */
+    public function addHeaders(array $headers)
+    {
+        foreach ($headers as $key => $value) {
+            $name = is_numeric($key) ? $value : $key;
+            $content = is_numeric($key) ? null : $value;
+            $this->addHeader($name, $content);
+        }
+
+        return $this;
     }
 
     /**
@@ -29,6 +48,8 @@ class Response
             header($header);
         }
         $this->clearHeader();
+
+        return $this;
     }
 
     /**
@@ -37,18 +58,8 @@ class Response
     public function clearHeader()
     {
         $this->headers = [];
-    }
 
-    /**
-     * Redirect to path
-     * @param  string $path
-     * @param  array  $param
-     */
-    public function redirect($path = null, array $param = [])
-    {
-        $this->addHeader('location', App::instance()->url($path, $param));
-        $this->sendHeader();
-        exit;
+        return $this;
     }
 
     /**
@@ -76,17 +87,8 @@ class Response
     public function clearContent()
     {
         $this->content = null;
-    }
 
-    /**
-     * Send json
-     * @param  string|object|array $data data to send
-     */
-    public function sendJSON($data)
-    {
-        $this->addHeader('Content-type', 'application/json');
-        $this->setContent(is_string($data) ? $data : json_encode($data));
-        $this->send();
+        return $this;
     }
 
     /**

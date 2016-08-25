@@ -1,31 +1,11 @@
-<?php
-
-if ($user->isAnonym()) {
-    $response->redirect('account/login');
-}
-
-$db = $app->service('database');
-$filter = [];
-if ($keyword = $request->query('keyword')) {
-    $filter = [
-        '(name like :keyword or username like :keyword)',
-        ':keyword' => '%'.$keyword.'%'
-    ];
-}
-$data = $db->find('user', $filter);
-
-$homeUrl = $app->urlPath(__DIR__);
-$app->set('currentPath', $homeUrl);
-?>
 <h1 class="page-header">Laporan User</h1>
 
-<div class="btn-group pull-right hidden-print" role="group">
-    <a href="<?php echo $app->url($homeUrl, $_GET); ?>" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span> Kembali</a>
-    <button class="btn btn-info" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</button>
+<div class="data-control clearfix hidden-print">
+    <div class="btn-group pull-right" role="group">
+        <a href="<?php echo $this->app->url($homeUrl, $_GET); ?>" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span> Kembali</a>
+        <button class="btn btn-info" onclick="window.print()"><span class="glyphicon glyphicon-print"></span> Print</button>
+    </div>
 </div>
-<br class="hidden-print">
-<br class="hidden-print">
-<br class="hidden-print">
 
 <table class="table table-bordered table-condensed table-striped table-hover table-print">
     <thead>

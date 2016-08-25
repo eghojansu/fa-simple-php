@@ -1,8 +1,8 @@
 # app/console
 # app/commands/
 dev/notes/*
-public/uploads/*
-public/avatars/*
+asset/uploads/*
+asset/avatars/*
 vendor/
 *.lock
 *.bak

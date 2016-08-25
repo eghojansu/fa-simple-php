@@ -1,5 +1,7 @@
 <?php
 
+namespace app;
+
 class Validation
 {
     protected $rules;
@@ -22,7 +24,7 @@ class Validation
      *        ]
      * @param array $skips
      */
-    public function __construct(array $data, array $rules, array $labels = [], array $skips = [])
+    public function __construct(array $data = [], array $rules = [], array $labels = [], array $skips = [])
     {
         $this->data = $data;
         $this->rules = $rules;
@@ -36,7 +38,125 @@ class Validation
             'min' => '{field} minimal {param}',
             'max' => '{field} maksimal {param}',
             'equal' => '{field} tidak sama dengan {param}',
+            'unique' => '{field} "{value}" sudah ada',
+            'exists' => '{field} "{value}" tidak ada',
         ];
+    }
+
+    /**
+     * Add message
+     *
+     * @param string $name
+     * @param string $message
+     */
+    public function setMessage($name, $message)
+    {
+        $this->messages[$name] = $message;
+
+        return $this;
+    }
+
+    /**
+     * Set data
+     *
+     * @param array $data
+     */
+    public function setData(array $data)
+    {
+        $this->data = $data;
+
+        return $this;
+    }
+
+    /**
+     * Set rules
+     *
+     * @param array $rules
+     */
+    public function setRules(array $rules)
+    {
+        $this->rules = $rules;
+
+        return $this;
+    }
+
+    /**
+     * Set labels
+     *
+     * @param array $labels
+     */
+    public function setLabels(array $labels)
+    {
+        $this->labels = $labels;
+
+        return $this;
+    }
+
+    /**
+     * Set skips
+     *
+     * @param array $skips
+     */
+    public function setSkips(array $skips)
+    {
+        $this->skips = $skips;
+
+        return $this;
+    }
+
+    /**
+     * Check exists
+     * Usage:
+     *     field => exists(table,[allowEmpty])
+     *
+     * @param  mixed $value
+     * @param  string $param
+     * @param  string $field
+     * @return bool
+     */
+    public function _exists($value, $param, $field)
+    {
+        $allowEmpty = $this->allowEmpty($param, $value);
+        $table = $param;
+
+        $db = App::instance()->service(Database::class);
+        $filter = [$field.' = ?', $value];
+        $data = $db->findOne($table, $filter);
+
+        $passed = !empty($data) || $allowEmpty;
+
+        return (bool) $passed;
+    }
+
+    /**
+     * Check unique
+     * Usage:
+     *     field => unique(table,[id,idValue,[allowEmpty]])
+     *
+     * @param  mixed $value
+     * @param  string $param
+     * @param  string $field
+     * @return bool
+     */
+    public function _unique($value, $param, $field)
+    {
+        $allowEmpty = $this->allowEmpty($param, $value);
+        $params = explode(',', $param);
+        $table = $params[0];
+        $id    = empty($params[1]) ? null : $params[1];
+        $idVal = empty($params[2]) ? null : $params[2];
+
+        $db = App::instance()->service(Database::class);
+        $filter = [$field.' = ?', $value];
+        if ($id) {
+            $filter[0] .= ' and '.$id.' <> ?';
+            $filter[] = $idVal;
+        }
+        $data = $db->findOne($table, $filter);
+
+        $passed = empty($data) || $allowEmpty;
+
+        return (bool) $passed;
     }
 
     /**
@@ -82,7 +202,7 @@ class Validation
     {
         $allowEmpty = $this->allowEmpty($param, $value);
         $checkPattern = '/'.$param.'/i';
-        $passed = preg_match($checkPattern, $value);
+        $passed = preg_match($checkPattern, $value) || $allowEmpty;
 
         return (bool) $passed;
     }

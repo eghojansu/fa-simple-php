@@ -1,5 +1,7 @@
 <?php
 
+namespace app;
+
 /**
  * Taken from github.com/level-2/dice (vesion that support php 5.4)
  * Change create method to get method

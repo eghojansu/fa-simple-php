@@ -1,12 +1,13 @@
 <?php
 
+namespace app;
+
 /**
  * User class
  */
 class User extends Magic
 {
     protected $data;
-    protected $redirectOK = false;
 
     public function __construct()
     {
