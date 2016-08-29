@@ -6,8 +6,6 @@ use app\UserController as UserControllerBase;
 use app\core\Database;
 use app\core\HTML;
 use app\core\Request;
-use app\core\User;
-use app\core\Validation;
 
 class UserController extends UserControllerBase
 {
@@ -69,12 +67,5 @@ class UserController extends UserControllerBase
         $delay = false;
 
         return $this->csv($filename, $header, $data, $delimiter, $delay);
-    }
-
-    public function beforeRoute(User $user)
-    {
-        if ($user->isAnonym()) {
-            return $this->redirect('account/login');
-        }
     }
 }

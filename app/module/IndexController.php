@@ -3,7 +3,6 @@
 namespace app\module;
 
 use app\UserController;
-use app\core\User;
 
 class IndexController extends UserController
 {

@@ -96,6 +96,6 @@ class AccountController extends UserController
     {
         $user->logout();
 
-        return $this->redirect('account/login');
+        return $this->redirect('login');
     }
 }
