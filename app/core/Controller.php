@@ -1,12 +1,13 @@
 <?php
 
-namespace app;
+namespace app\core;
 
 use LogicException;
 
 class Controller
 {
     protected $app;
+    protected $template;
     protected $templatePath;
     protected $viewPath;
     protected $extension = '.php';
@@ -17,6 +18,7 @@ class Controller
         'response'=>Response::class,
         'form'=>Form::class,
         'html'=>HTML::class,
+        'helper'=>Helper::class,
         'validation'=>Validation::class,
     ];
 
@@ -25,8 +27,8 @@ class Controller
         $class = get_called_class();
         $nsp = substr($class, 0, strrpos($class, '\\'));
         $this->app = App::instance();
-        $this->templatePath = Helper::fixSlashes(__DIR__.'/template');
-        $this->viewPath = Helper::fixSlashes(dirname(__DIR__).'/'.$nsp.'/view');
+        $this->templatePath = $this->app->get('templatePath');
+        $this->viewPath = Helper::fixSlashes(dirname(dirname(__DIR__)).'/'.$nsp.'/view');
     }
 
     public function __get($var)
@@ -36,6 +38,13 @@ class Controller
         }
 
         throw new LogicException("Service '$var' not found");
+    }
+
+    protected function setTemplate($template)
+    {
+        $this->template = $template;
+
+        return $this;
     }
 
     protected function redirect($path = null, array $param = [])
@@ -58,7 +67,7 @@ class Controller
         return $response;
     }
 
-    protected function render($_template = null, $_view = null, array $_data = [], array $_headers = [])
+    protected function render($_view = null, array $_data = [], array $_headers = [])
     {
         $pageTitle = $this->app->get('name');
         extract($_data);
@@ -70,9 +79,9 @@ class Controller
             $_content = ob_get_clean();
         }
 
-        if ($_template) {
+        if ($this->template) {
             ob_start();
-            require $this->templatePath.$_template.$this->extension;
+            require $this->templatePath.$this->template.$this->extension;
             $_content = ob_get_clean();
         }
 

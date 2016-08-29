@@ -2,20 +2,13 @@
 
 namespace app\module;
 
-use app\Controller;
-use app\User;
+use app\UserController;
+use app\core\User;
 
-class IndexController extends Controller
+class IndexController extends UserController
 {
     public function main()
     {
-        return $this->render('default', 'default');
-    }
-
-    public function beforeRoute(User $user)
-    {
-        if ($user->isAnonym()) {
-            return $this->redirect('account/login');
-        }
+        return $this->render('default');
     }
 }

@@ -1,5 +1,3 @@
-# app/console
-# app/commands/
 dev/notes/*
 asset/uploads/*
 asset/avatars/*

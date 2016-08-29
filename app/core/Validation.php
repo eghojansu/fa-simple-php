@@ -1,6 +1,6 @@
 <?php
 
-namespace app;
+namespace app\core;
 
 class Validation
 {
@@ -107,7 +107,7 @@ class Validation
     /**
      * Check exists
      * Usage:
-     *     field => exists(table,[allowEmpty])
+     *     field => exists(table,[column,[allowEmpty]])
      *
      * @param  mixed $value
      * @param  string $param
@@ -117,10 +117,12 @@ class Validation
     public function _exists($value, $param, $field)
     {
         $allowEmpty = $this->allowEmpty($param, $value);
-        $table = $param;
+        $params = explode(',', $param);
+        $table = $params[0];
+        $column = empty($params[1]) ? $field : $params[1];
 
         $db = App::instance()->service(Database::class);
-        $filter = [$field.' = ?', $value];
+        $filter = [$column.' = ?', $value];
         $data = $db->findOne($table, $filter);
 
         $passed = !empty($data) || $allowEmpty;

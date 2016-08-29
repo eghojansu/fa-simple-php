@@ -1,6 +1,6 @@
 <?php
 
-namespace app;
+namespace app\core;
 
 /**
  * Form Helper
@@ -366,7 +366,7 @@ class Form
         } else {
             $optionStr = '';
             if ($attrs['placeholder']) {
-                $optionStr .= '<option>'.$attrs['placeholder'].'</option>';
+                $optionStr .= '<option value="">'.$attrs['placeholder'].'</option>';
             }
             foreach ($options as $label => $value) {
                 $a = ['value'=>$value];

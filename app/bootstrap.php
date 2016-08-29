@@ -1,11 +1,13 @@
 <?php
 
-use app\App;
-use app\Database;
-use app\Loader;
+use app\Model;
+use app\core\App;
+use app\core\Breadcrumb;
+use app\core\Database;
+use app\core\Loader;
 
 // require loader
-require __DIR__.'/Loader.php';
+require __DIR__.'/core/Loader.php';
 
 $loader = new Loader;
 $loader
@@ -17,16 +19,21 @@ $loader
 $app = App::instance();
 
 // register configuration from file
+// it will remains in App properties
 $config = $app->load(__DIR__.'/config/config.php');
 $app->register($config);
 
+// configure services
 $database = $app->load(__DIR__.'/config/database.php');
 $rules = [
     Database::class => [
         'constructParams'=>[$database],
         'shared'=>true,
     ],
-    // app\Breadcrumb::class => [
+    Model::class => [
+        'shared'=>true,
+    ],
+    // Breadcrumb::class => [
     //     'shared'=>true,
     //     'constructParams'=>[
     //      '<svg class="glyph stroked home"><use xlink:href="#stroked-home"></use></svg>',

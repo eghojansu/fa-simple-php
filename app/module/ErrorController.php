@@ -2,13 +2,15 @@
 
 namespace app\module;
 
-use app\Controller;
+use app\core\Controller;
 
 class ErrorController extends Controller
 {
+    protected $template = 'not-found';
+
     public function notFound()
     {
-        return $this->render('not-found', null, [
+        return $this->render(null, [
                 'title'=>'404 - Halaman tidak ditemukan',
                 'message'=>'Halaman yang anda minta tidak ditemukan!',
             ], [
@@ -17,7 +19,7 @@ class ErrorController extends Controller
     }
     public function notAllowed()
     {
-        return $this->render('not-found', null, [
+        return $this->render(null, [
                 'title'=>'405 - Forbidden',
                 'message'=>'Anda dilarang mengakses halaman ini!',
             ], [

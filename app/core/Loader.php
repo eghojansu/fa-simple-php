@@ -1,6 +1,6 @@
 <?php
 
-namespace app;
+namespace app\core;
 
 /**
  * Inspired by Composer/ClassLoader

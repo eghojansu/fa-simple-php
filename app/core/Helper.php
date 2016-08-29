@@ -1,6 +1,8 @@
 <?php
 
-namespace app;
+namespace app\core;
+
+use DateTime;
 
 /**
  * Helper
@@ -11,7 +13,37 @@ class Helper
     public static $months = [1=>'Januari','Februari','Maret','April','Mei',
         'Juni','Juli','Agustus','September','Oktober','November','Desember'
     ];
-    public static $roman = [1=>'I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
+    public static $romans = [1=>'I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
+
+    /**
+     * Get days
+     *
+     * @return array
+     */
+    public static function days()
+    {
+        return self::$days;
+    }
+
+    /**
+     * Get days
+     *
+     * @return array
+     */
+    public static function months()
+    {
+        return self::$months;
+    }
+
+    /**
+     * Get days
+     *
+     * @return array
+     */
+    public static function romans()
+    {
+        return self::$romans;
+    }
 
     /**
      * Join date
@@ -194,7 +226,7 @@ class Helper
     {
         $date = $tanggal instanceof DateTime ?$tanggal:new DateTime($tanggal);
 
-        return self::$roman[$date->format('n')];
+        return self::$romans[$date->format('n')];
     }
 
     /**

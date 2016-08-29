@@ -1,16 +1,14 @@
 <?php
 
-use app\Helper;
-use app\Request;
-use app\Response;
+use app\core\Helper;
+use app\core\Request;
+use app\core\Response;
 
 // bootstrap
 require 'app/bootstrap.php';
 
-// current path, underscore removed, and its an absolute path
+// current path
 $current_path = $app->service(Request::class)->currentPath(true);
-    $current_path = str_replace('_', '', $current_path);
-    $current_path = Helper::ensureAbsolute($current_path);
 
 // handling request
 $namespace = 'app\\module\\';
@@ -36,6 +34,9 @@ if ($segments) {
         $method = 'notFound';
     }
     $args = $segments;
+
+    // replace - or _ to camelCase method
+    $method = lcfirst(str_replace(' ', '', ucwords(str_replace(['_','-'], ' ', $method))));
 } else {
     // use default
     $class = $namespace.$defaultController;
@@ -58,22 +59,21 @@ if (false === $mref->isPublic()) {
 }
 
 // controller construction
-// construct
 $instance = $app->service($class);
-$response = true;
+$response = null;
 if (method_exists($instance, 'beforeRoute')) {
     $response = $app->call($instance, 'beforeRoute', $args);
 }
-if (true === $response || null === $response) {
+if (false !== $response) {
     $response = $app->call($instance, $method, $args);
 }
-if (method_exists($instance, 'afterRoute')) {
-    $response = $app->call($instance, 'afterRoute', $args);
-}
+// if (method_exists($instance, 'afterRoute')) {
+//     $app->call($instance, 'afterRoute', $args);
+// }
 
 if ($response instanceof Response) {
     // send response
     $response->send();
 } else {
-    echo "Invalid response!";
+    echo "Invalid response! please fix it";
 }

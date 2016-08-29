@@ -1,6 +1,6 @@
 <?php
 
-namespace app;
+namespace app\core;
 
 use ReflectionMethod;
 
@@ -12,7 +12,7 @@ use ReflectionMethod;
 class App extends Magic
 {
     const PACKAGE = 'eghojansu/fa-simple-php';
-    const VERSION = '2.0.0';
+    const VERSION = '2.1.0';
 
     protected $data = [
         // hold output
@@ -39,6 +39,9 @@ class App extends Magic
         User::class => [
             'shared'=>true,
         ],
+        Helper::class => [
+            'shared'=>true,
+        ],
         BatchInsert::class => [
             'substitutions'=>['Database'=>['instance'=>Database::class]]
         ],
@@ -46,6 +49,11 @@ class App extends Magic
     protected $assetRoot;
     protected $service;
     private static $instance;
+
+    public function __construct()
+    {
+        $this->data['templatePath'] = Helper::fixSlashes(dirname(__DIR__).'/template');
+    }
 
 
     /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace app;
+namespace app\core;
 
 /**
  * Taken from github.com/level-2/dice (vesion that support php 5.4)

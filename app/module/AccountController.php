@@ -1,71 +1,17 @@
 <?php
 
-namespace app\module\account;
+namespace app\module;
 
-use app\Controller;
-use app\Database;
-use app\Helper;
-use app\Request;
-use app\User;
+use app\UserController;
+use app\core\Database;
+use app\core\Helper;
+use app\core\Request;
+use app\core\User;
 
-class AccountController extends Controller
+class AccountController extends UserController
 {
-    public function main()
+    public function main(User $user, Database $db, Request $request, Helper $helper)
     {
-        return $this->login();
-    }
-
-    public function login(User $user, Request $request, Database $db)
-    {
-        if ($user->hasBeenLogin()) {
-            return $this->redirect('index');
-        }
-
-        $username = $request->get('username');
-        $password = $request->get('password');
-        $error = null;
-        if ($request->isPost()) {
-            $filter = ['username = ? and password = ?',
-                $username, $password,
-            ];
-            $data = $db->findOne('user', $filter);
-
-            if (empty($data)) {
-                $error = 'Login gagal! Username atau password tidak cocok!';
-            } else {
-                $user->login($data['level'], $data);
-
-                return $this->redirect('index');
-            }
-        }
-
-        $form = $this->form
-            ->setData([
-                'username'=>$username,
-                ])
-            ->setAttrs([
-                'id'=>'login-form'
-                ])
-            ->setDefaultLabelAttrs([
-                'class'=>'sr-only'
-                ])
-            ->setDefaultControlAttrs([
-                'class'=>'form-control form-block'
-                ])
-        ;
-
-        return $this->render(null, 'login', [
-            'form'=>$form,
-            'error'=>$error,
-            ]);
-    }
-
-    public function profil(User $user, Database $db, Request $request)
-    {
-        if ($user->isAnonym()) {
-            return $this->redirect('account/login');
-        }
-
         $fields = [
             'username'=>$request->get('username', $user->get('username')),
             'password'=>$request->get('password', $user->get('password')),
@@ -73,7 +19,7 @@ class AccountController extends Controller
             'name'=>$request->get('name', $user->get('name')),
         ];
         $error   = null;
-        $selfUrl = 'account/profil';
+        $selfUrl = 'account';
 
         $labels = $this->app->load('app/config/translations/user-labels.php');
         if ($request->isPost()) {
@@ -95,7 +41,7 @@ class AccountController extends Controller
             if (!$error) {
                 // handle file
                 $filename = $request->baseDir().'asset/avatars/user-'.$user->get('id');
-                if (Helper::handleFileUpload('avatar', $filename, $this->app->get('imageTypes'))) {
+                if ($helper->handleFileUpload('avatar', $filename, $this->app->get('imageTypes'))) {
                     $fields['avatar'] = basename($filename);
                 }
 
@@ -139,7 +85,7 @@ class AccountController extends Controller
             ])
         ;
 
-        return $this->render('default', 'profil', [
+        return $this->setTemplate('default')->render('profil', [
             'form'=>$form,
             'avatar'=>$avatar,
             'backUrl'=>'index',

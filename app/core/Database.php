@@ -1,6 +1,6 @@
 <?php
 
-namespace app;
+namespace app\core;
 
 use PDO;
 use Exception;
@@ -158,7 +158,7 @@ class Database
      */
     public function nextID($table, $column, $formatter = null, array $criteria = [])
     {
-        $record = $this->selectOne($column, $table, $criteria, 'order by '.$column.' desc limit 1');
+        $record = $this->selectOne($column, $table, $criteria, 'order by cast('.$column.' as int) desc limit 1');
         $nextID = $formatter?call_user_func_array($formatter, [$record]):($record?$record[$column]*1+1:1);
 
         return $nextID;

@@ -2,14 +2,14 @@
 
 namespace app\module\laporan;
 
-use app\Controller;
-use app\Database;
-use app\HTML;
-use app\Request;
-use app\User;
-use app\Validation;
+use app\UserController as UserControllerBase;
+use app\core\Database;
+use app\core\HTML;
+use app\core\Request;
+use app\core\User;
+use app\core\Validation;
 
-class UserController extends Controller
+class UserController extends UserControllerBase
 {
     protected $homeUrl = 'laporan/user';
 
@@ -25,7 +25,7 @@ class UserController extends Controller
         $subset = $db->paginate('user', $filter, null, is_numeric($page)?$page:1);
         $pagination = $html->pagination($subset, ['route'=>$this->homeUrl.'/{page}','params'=>['page'=>$page]]);
 
-        return $this->render('default', 'user/list', [
+        return $this->render('user/list', [
             'subset'=>$subset,
             'homeUrl'=>$this->homeUrl,
             'keyword'=>$keyword,
@@ -46,7 +46,7 @@ class UserController extends Controller
         }
         $data = $db->find('user', $filter);
 
-        return $this->render('default', 'user/print', [
+        return $this->render('user/print', [
             'data'=>$data,
             'homeUrl'=>$this->homeUrl,
             ]);

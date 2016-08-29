@@ -2,13 +2,13 @@
 
 namespace app\module\master;
 
-use app\Controller;
-use app\Database;
-use app\HTML;
-use app\Request;
-use app\User;
+use app\UserController as UserControllerBase;
+use app\core\Database;
+use app\core\HTML;
+use app\core\Request;
+use app\core\User;
 
-class UserController extends Controller
+class UserController extends UserControllerBase
 {
     protected $homeUrl = 'master/user';
 
@@ -22,7 +22,7 @@ class UserController extends Controller
         $subset = $db->paginate('user', $filter, null, is_numeric($page)?$page:1);
         $pagination = $html->pagination($subset, ['route'=>$this->homeUrl.'/{page}','params'=>['page'=>$page]]);
 
-        return $this->render('default', 'user/list', [
+        return $this->render('user/list', [
             'subset'=>$subset,
             'homeUrl'=>$this->homeUrl,
             'keyword'=>$keyword,
@@ -86,7 +86,7 @@ class UserController extends Controller
             ])
         ;
 
-        return $this->render('default', 'user/create', [
+        return $this->render('user/create', [
             'form'=>$form,
             'homeUrl'=>$this->homeUrl,
             ]);
@@ -153,7 +153,7 @@ class UserController extends Controller
             ])
         ;
 
-        return $this->render('default', 'user/update', [
+        return $this->render('user/update', [
             'form'=>$form,
             'homeUrl'=>$this->homeUrl,
             ]);
@@ -173,7 +173,7 @@ class UserController extends Controller
             return $this->redirect($this->homeUrl);
         }
 
-        return $this->render('default', 'user/detail', [
+        return $this->render('user/detail', [
             'record'=>$record,
             'homeUrl'=>$this->homeUrl,
             ]);
@@ -191,12 +191,5 @@ class UserController extends Controller
         $user->message('info', 'Data sudah dihapus!');
 
         return $this->redirect($this->homeUrl);
-    }
-
-    public function beforeRoute(User $user)
-    {
-        if ($user->isAnonym()) {
-            return $this->redirect('account/login');
-        }
     }
 }
