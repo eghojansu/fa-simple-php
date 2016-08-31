@@ -8,54 +8,52 @@ use app\core\Response;
 require 'app/bootstrap.php';
 
 // current path
-$current_path = $app->service(Request::class)->currentPath(true);
+$current_path      = $app->service(Request::class)->currentPath(true);
 
 // handling request
-$namespace = 'app\\module\\';
-$suffix = 'Controller';
-$defaultController = 'Index'.$suffix;
-$defaultMethod = 'main';
-$errorHandler = $namespace.'Error'.$suffix;
-$segments = explode('/', $current_path);
-    $segments = array_filter($segments);
+$namespace         = $app->get('controllerNamespace');
+$suffix            = $app->get('controllerSuffix');
+$defaultController = $app->get('controllerDefault');
+$defaultMethod     = $app->get('controllerDefaultMethod');
+$errorHandler      = $app->get('controllerError');
+$segments          = array_filter(explode('/', $current_path));
+
+// default
+$class             = $defaultController;
+$method            = $defaultMethod;
+$args              = [];
+
 if ($segments) {
-    // handle it, support two-depth controller location
-    if (class_exists($class = $namespace.$segments[0].$suffix)
-        || class_exists($class = $namespace.$segments[0].'\\'.$segments[0].$suffix)
-    ) {
-        array_shift($segments);
-        $method = $segments?array_shift($segments):$defaultMethod;
-    } elseif (isset($segments[1]) && class_exists($class = $namespace.$segments[0].'\\'.$segments[1].$suffix)) {
-        array_shift($segments);
-        array_shift($segments);
-        $method = $segments?array_shift($segments):$defaultMethod;
-    } else {
-        $class = $errorHandler;
-        $method = 'notFound';
-    }
-    $args = $segments;
-
-    // replace - or _ to camelCase method
-    $method = lcfirst(str_replace(' ', '', ucwords(str_replace(['_','-'], ' ', $method))));
-} else {
-    // use default
-    $class = $namespace.$defaultController;
-    $method = $defaultMethod;
-    $args = [];
-}
-
-// fix method
-if (false === method_exists($class, $method)) {
-    array_unshift($args, $method);
-    $method = $defaultMethod;
-}
-
-// check method visibility
-$mref = new ReflectionMethod($class, $method);
-if (false === $mref->isPublic()) {
-    // invalid method
+    $str = $namespace;
     $class = $errorHandler;
-    $method = 'notAllowed';
+    $method = 'notFound';
+    foreach ($segments as $key=>$segment) {
+        $segment = Helper::fixRouteToClassMap($segment);
+        if (class_exists($c = $str.ucfirst($segment).$suffix) ||
+            class_exists($c = $str.$segment.'\\'.ucfirst($segment).$suffix)) {
+            $class = $c;
+            $segments = array_slice($segments, $key+1);
+            $method = $segments?Helper::fixRouteToClassMap(array_shift($segments)):$defaultMethod;
+            $args = $segments;
+
+            // fix method
+            if (false === method_exists($class, $method)) {
+                array_unshift($args, $method);
+                $method = $defaultMethod;
+            }
+
+            // check method visibility
+            $mref = new ReflectionMethod($class, $method);
+            if (false === $mref->isPublic()) {
+                // invalid method
+                $class = $errorHandler;
+                $method = 'notAllowed';
+            }
+            break;
+        }
+
+        $str .= $segment.'\\';
+    }
 }
 
 // controller construction

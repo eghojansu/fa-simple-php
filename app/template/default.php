@@ -1,6 +1,5 @@
 <?php
 $nav  = $this->app->load('app/config/nav.php');
-$currentPath = $this->app->get('currentPath');
 $html = $this->html;
 $user = $this->user;
 $main_nav = $html->navbarNav($nav['main'], $currentPath);

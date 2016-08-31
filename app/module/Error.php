@@ -4,7 +4,7 @@ namespace app\module;
 
 use app\core\Controller;
 
-class ErrorController extends Controller
+class Error extends Controller
 {
     protected $template = 'not-found';
 

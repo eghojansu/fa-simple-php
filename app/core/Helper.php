@@ -16,6 +16,34 @@ class Helper
     public static $romans = [1=>'I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
 
     /**
+     * Fix route to class map, hypen and _ converted as camelCase file name
+     *
+     * @param  string $str
+     * @return string
+     */
+    public static function fixRouteToClassMap($str)
+    {
+        $normalized = preg_replace_callback('/[\-_]([[:alnum:]])/', function($match) {
+            return strtoupper($match[1]);
+        }, $str);
+
+        return $normalized;
+    }
+
+    /**
+     * Change class to path
+     *
+     * @param  string $str
+     * @return string
+     */
+    public static function classToPath($str)
+    {
+        $path = strtolower(preg_replace('/([[:upper:]])/', '-\\1', lcfirst($str)));
+
+        return $path;
+    }
+
+    /**
      * Get days
      *
      * @return array
@@ -171,6 +199,10 @@ class Helper
      */
     public static function tanggal($tanggal)
     {
+        if (!$tanggal) {
+            return null;
+        }
+
         $date = new DateTime($tanggal);
 
         return $date->format('d').' '.self::$months[$date->format('n')].' '.$date->format('Y');

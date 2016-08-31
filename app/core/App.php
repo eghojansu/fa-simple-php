@@ -24,6 +24,16 @@ class App extends Magic
         // show file entry in url
         'showEntryFile'=>false,
         'continueOnDBError'=>true,
+        // controller namespace
+        'controllerNamespace'=>'app\\module\\',
+        // main controller
+        'controllerDefault'=>'app\\module\\IndexController',
+        // error handler
+        'controllerError'=>'app\\module\\Error',
+        // controller suffix
+        'controllerSuffix'=>'Controller',
+        // main controller method
+        'controllerDefaultMethod'=>'main',
     ];
     // default services
     protected $rules = [
