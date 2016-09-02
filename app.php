@@ -24,50 +24,58 @@ $method            = $defaultMethod;
 $args              = [];
 
 if ($segments) {
-    $str = $namespace;
     $class = $errorHandler;
     $method = 'notFound';
-    foreach ($segments as $key=>$segment) {
-        $segment = Helper::fixRouteToClassMap($segment);
-        if (class_exists($c = $str.ucfirst($segment).$suffix) ||
-            class_exists($c = $str.$segment.'\\'.ucfirst($segment).$suffix)) {
+    $pMethod = $defaultMethod;
+    while ($segments) {
+        $clone = $segments;
+        $pClass = ucfirst(Helper::fixRouteToClassMap(array_pop($clone)));
+        $pNamespace = $clone ? Helper::fixRouteToClassMap(implode('\\', $clone).'\\') : '';
+        if (class_exists($c = $namespace.$pNamespace.$pClass.$suffix)
+            || class_exists($c = $namespace.$pNamespace.lcfirst($pClass).'\\'.$pClass.$suffix)
+        ) {
             $class = $c;
-            $segments = array_slice($segments, $key+1);
-            $method = $segments?Helper::fixRouteToClassMap(array_shift($segments)):$defaultMethod;
-            $args = $segments;
 
-            // fix method
-            if (false === method_exists($class, $method)) {
-                array_unshift($args, $method);
+             // check method
+            if (method_exists($class, $pMethod)) {
+                $method = $pMethod;
+                array_shift($args);
+            }
+            else {
                 $method = $defaultMethod;
             }
 
             // check method visibility
             $mref = new ReflectionMethod($class, $method);
-            if (false === $mref->isPublic()) {
+            if (false === $mref->isPublic() || '_' === $method[0] || method_exists($class, '_'.$method)) {
                 // invalid method
                 $class = $errorHandler;
                 $method = 'notAllowed';
             }
-            break;
-        }
+            $mref = null;
 
-        $str .= $segment.'\\';
+            $segments = [];
+        }
+        else {
+            $last = array_pop($segments);
+            $pMethod = Helper::fixRouteToClassMap($last);
+            array_unshift($args, $last);
+        }
     }
 }
+unset($current_path, $namespace, $suffix, $defaultController,
+    $defaultMethod, $errorHandler, $segments, $pMethod, $clone,
+    $pClass, $pNamespace, $mref);
 
 // controller construction
 $instance = $app->service($class);
 $response = null;
-if (method_exists($instance, 'beforeRoute')) {
-    $response = $app->call($instance, 'beforeRoute', $args);
+if (method_exists($instance, '_beforeRoute')) {
+    $response = $app->call($instance, '_beforeRoute', $args);
 }
 if (false !== $response) {
     $response = $app->call($instance, $method, $args);
 }
-// if (method_exists($instance, 'afterRoute')) {
-//     $app->call($instance, 'afterRoute', $args);
-// }
 
 if ($response instanceof Response) {
     // send response

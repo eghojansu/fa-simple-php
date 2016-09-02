@@ -3,15 +3,14 @@
 namespace app;
 
 use app\core\Controller;
-use app\core\User;
 
 class UserController extends Controller
 {
     protected $template = 'default';
 
-    public function beforeRoute(User $user)
+    public function _beforeRoute()
     {
-        if ($user->isAnonym()) {
+        if ($this->user->isAnonym()) {
             return $this->redirect('login');
         }
     }

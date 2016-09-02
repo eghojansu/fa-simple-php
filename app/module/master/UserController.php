@@ -192,4 +192,10 @@ class UserController extends UserControllerBase
 
         return $this->redirect($this->homeUrl);
     }
+
+    public function _beforeRoute()
+    {
+        parent::_beforeRoute();
+        $this->app->set('currentPath', $this->homeUrl);
+    }
 }

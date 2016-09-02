@@ -85,7 +85,7 @@ class AccountController extends UserController
             ])
         ;
 
-        return $this->setTemplate('default')->render('profil', [
+        return $this->render('profil', [
             'form'=>$form,
             'avatar'=>$avatar,
             'backUrl'=>'index',

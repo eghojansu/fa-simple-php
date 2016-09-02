@@ -11,16 +11,19 @@ $account_nav = $html->navbarNav($nav['account'], $currentPath, ['appendClass'=>'
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?php echo $this->app->get('pageTitle'); ?></title>
-    <link href="<?php echo $this->app->asset('asset/css/bootstrap.min.css'); ?>" rel="stylesheet">
+    <title><?php echo $pageTitle; ?></title>
     <link href="<?php echo $this->app->asset('asset/css/font-awesome.min.css'); ?>" rel="stylesheet">
+    <link href="<?php echo $this->app->asset('asset/css/bootstrap.min.css'); ?>" rel="stylesheet">
     <link href="<?php echo $this->app->asset('asset/css/bootstrap-datepicker3.min.css'); ?>" rel="stylesheet">
+    <link href="<?php echo $this->app->asset('asset/css/daterangepicker.css'); ?>" rel="stylesheet">
     <link href="<?php echo $this->app->asset('asset/css/style.css'); ?>" rel="stylesheet">
 
     <script src="<?php echo $this->app->asset('asset/js/jquery.min.js'); ?>"></script>
+    <script src="<?php echo $this->app->asset('asset/js/moment.min.js'); ?>"></script>
     <script src="<?php echo $this->app->asset('asset/js/bootstrap.min.js'); ?>"></script>
     <script src="<?php echo $this->app->asset('asset/js/bootstrap-datepicker.min.js'); ?>"></script>
     <script src="<?php echo $this->app->asset('asset/js/bootstrap-datepicker.id.min.js'); ?>"></script>
+    <script src="<?php echo $this->app->asset('asset/js/daterangepicker.js'); ?>"></script>
     <script src="<?php echo $this->app->asset('asset/js/notify.min.js'); ?>"></script>
     <script src="<?php echo $this->app->asset('asset/js/bootbox.min.js'); ?>"></script>
     <script src="<?php echo $this->app->asset('asset/js/autonumeric.js'); ?>"></script>

@@ -14,6 +14,20 @@ $(document).ready(function() {
 	$('[data-toggle=datepicker]').datepicker({
 		format: 'yyyy-mm-dd'
 	})
+    $('[data-toggle=rangepicker]').each(function() {
+        var $this = $(this)
+        var delim = $this.data('delim') || ' sd '
+        var format = $this.data('format') || 'DD/MM/YYYY'
+
+        $this.daterangepicker({
+            locale: {
+              format: format
+            },
+            autoUpdateInput: false
+        }, function(start, end) {
+            $this.val(start.format(format)+delim+end.format(format))
+        })
+    })
 	$('[data-confirm=delete]').on('click', function(event) {
 		event.preventDefault()
 		var target = $(this).prop('href')
@@ -23,8 +37,4 @@ $(document).ready(function() {
 			}
 		})
 	})
-    $('.clear-text').on('click', function() {
-        alert('x')
-        $(this).prev('.form-control').val('')
-    })
 })

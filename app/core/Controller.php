@@ -26,12 +26,16 @@ class Controller
     {
         $this->app = App::instance();
 
-        $fullClass = get_called_class();
-        $pos = strrpos($fullClass, '\\');
-        $nsp = false === $pos ? '/' : substr($fullClass, 0, $pos);
+        if (!$this->templatePath) {
+            $this->templatePath = $this->app->get('templatePath');
+        }
+        if (!$this->viewPath) {
+            $fullClass = get_called_class();
+            $pos = strrpos($fullClass, '\\');
+            $nsp = false === $pos ? '/' : substr($fullClass, 0, $pos);
 
-        $this->templatePath = $this->app->get('templatePath');
-        $this->viewPath = Helper::fixSlashes(dirname(dirname(__DIR__)).'/'.$nsp.'/view/');
+            $this->viewPath = Helper::fixSlashes(dirname(dirname(__DIR__)).'/'.$nsp.'/view/');
+        }
     }
 
     public function __get($var)
@@ -72,8 +76,8 @@ class Controller
 
     protected function render($_view = null, array $_data = [], array $_headers = [])
     {
-        $pageTitle = $this->app->get('name');
-        $currentPath = $this->request->currentPath();
+        $pageTitle = $this->app->get('pageTitle')?:$this->app->get('name');
+        $currentPath = $this->app->get('currentPath')?:$this->request->currentPath();
         extract($_data);
         $_content = null;
 

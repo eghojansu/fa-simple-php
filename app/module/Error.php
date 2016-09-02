@@ -17,6 +17,7 @@ class Error extends Controller
                 'HTTP/1.0 404 Not Found'
             ]);
     }
+
     public function notAllowed()
     {
         return $this->render(null, [

@@ -1,6 +1,7 @@
 dev/notes/*
 asset/uploads/*
 asset/avatars/*
+node_modules/*
 vendor/
 *.lock
 *.bak

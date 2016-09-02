@@ -68,4 +68,10 @@ class UserController extends UserControllerBase
 
         return $this->csv($filename, $header, $data, $delimiter, $delay);
     }
+
+    public function _beforeRoute()
+    {
+        parent::_beforeRoute();
+        $this->app->set('currentPath', $this->homeUrl);
+    }
 }
