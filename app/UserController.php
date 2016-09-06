@@ -10,8 +10,6 @@ class UserController extends Controller
 
     public function _beforeRoute()
     {
-        if ($this->user->isAnonym()) {
-            return $this->redirect('login');
-        }
+        // what should i do?
     }
 }

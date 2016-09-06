@@ -1,4 +1,6 @@
 $(document).ready(function() {
+    var printing = false
+
 	$('.notifier').each(function() {
 		var opt = $.extend({}, {
 			'style': 'bootstrap',
@@ -37,4 +39,11 @@ $(document).ready(function() {
 			}
 		})
 	})
+    $('[data-ready=print]').each(function() {
+        if (!printing) {
+            window.print()
+        }
+
+        printing = true;
+    })
 })

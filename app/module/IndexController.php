@@ -8,6 +8,6 @@ class IndexController extends UserController
 {
     public function main()
     {
-        return $this->render('default');
+        return $this->render(null);
     }
 }

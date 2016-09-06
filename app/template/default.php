@@ -1,9 +1,6 @@
 <?php
-$nav  = $this->app->load('app/config/nav.php');
 $html = $this->html;
 $user = $this->user;
-$main_nav = $html->navbarNav($nav['main'], $currentPath);
-$account_nav = $html->navbarNav($nav['account'], $currentPath, ['appendClass'=>'navbar-right']);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -13,7 +10,7 @@ $account_nav = $html->navbarNav($nav['account'], $currentPath, ['appendClass'=>'
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?php echo $pageTitle; ?></title>
     <link href="<?php echo $this->app->asset('asset/css/font-awesome.min.css'); ?>" rel="stylesheet">
-    <link href="<?php echo $this->app->asset('asset/css/bootstrap.min.css'); ?>" rel="stylesheet">
+    <link href="<?php echo $this->app->asset('asset/css/bootstrap.css'); ?>" rel="stylesheet">
     <link href="<?php echo $this->app->asset('asset/css/bootstrap-datepicker3.min.css'); ?>" rel="stylesheet">
     <link href="<?php echo $this->app->asset('asset/css/daterangepicker.css'); ?>" rel="stylesheet">
     <link href="<?php echo $this->app->asset('asset/css/style.css'); ?>" rel="stylesheet">
@@ -36,27 +33,16 @@ $account_nav = $html->navbarNav($nav['account'], $currentPath, ['appendClass'=>'
     <![endif]-->
   </head>
   <body>
-    <nav class="navbar navbar-default navbar-static-top">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="<?php echo $this->app->url(); ?>"><?php echo $this->app->get('alias'); ?></a>
-        </div>
-
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-          <?php echo $main_nav; ?>
-          <?php echo $account_nav; ?>
-        </div>
-      </div>
-    </nav>
 
     <div class="container">
-      <?php echo $_content; ?>
+      <div class="jumbotron">
+        <h1>This is a landing page</h1>
+        <?php if ($user->is('admin')): ?>
+          <a href="<?php echo $this->app->url('admin'); ?>">Beranda</a>
+        <?php else: ?>
+          <a href="<?php echo $this->app->url('admin/login'); ?>">Login Admin</a>
+        <?php endif; ?>
+      </div>
     </div>
 
     <?php

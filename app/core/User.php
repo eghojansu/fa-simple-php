@@ -96,6 +96,17 @@ class User extends Magic
         return !empty($intersection);
     }
 
+    /**
+     * is complementer
+     *
+     * @param  string|string[]  $role
+     * @return boolean
+     */
+    public function isNot($role)
+    {
+        return !$this->is($role);
+    }
+
     protected function &getPool()
     {
         return $this->data;

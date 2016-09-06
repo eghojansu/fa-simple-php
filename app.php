@@ -73,7 +73,7 @@ $response = null;
 if (method_exists($instance, '_beforeRoute')) {
     $response = $app->call($instance, '_beforeRoute', $args);
 }
-if (false !== $response) {
+if (false === $response || null === $response) {
     $response = $app->call($instance, $method, $args);
 }
 

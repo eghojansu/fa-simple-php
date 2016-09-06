@@ -5,12 +5,6 @@ html {
   max-width: 740px;
   padding-top: 50px; }
 
-.container {
-  background: transparent; }
-
-.page-header {
-  margin-top: 0; }
-
 .data-control {
   margin-bottom: 30px; }
 
@@ -43,6 +37,9 @@ html {
     margin: auto;
     min-width: 50%;
     min-height: 50%; }
+
+[data-ready="print"] {
+  display: none; }
 
 @page {
   size: A4;

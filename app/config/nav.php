@@ -7,7 +7,7 @@ return [
     'main' => [
         [
             'label' => 'Beranda',
-            'path' => 'index',
+            'path' => 'admin',
         ],
         [
             'label' => 'Master',
@@ -15,7 +15,7 @@ return [
             'items' => [
                 [
                     'label' => 'User',
-                    'path' => 'master/user',
+                    'path' => 'admin/master/user',
                 ],
             ],
         ],
@@ -25,7 +25,7 @@ return [
             'items' => [
                 [
                     'label' => 'User',
-                    'path' => 'laporan/user',
+                    'path' => 'admin/laporan/user',
                 ],
             ],
         ],
@@ -38,11 +38,11 @@ return [
             'items' => [
                 [
                     'label' => 'Profile',
-                    'path' => 'account/profil',
+                    'path' => 'admin/account',
                 ],
                 [
                     'label' => 'Logout',
-                    'path' => 'account/logout',
+                    'path' => 'admin/logout',
                 ],
             ],
         ],
