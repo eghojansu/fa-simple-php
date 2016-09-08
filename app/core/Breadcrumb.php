@@ -8,11 +8,25 @@ namespace app\core;
 class Breadcrumb
 {
 	protected $urls = [];
+    protected $options = [];
 
-	public function __construct($label, $link = null, array $args = [])
+	public function __construct($label = null, $link = null, array $args = [])
 	{
-		$this->add($label, $link, $args);
+        if ($label) {
+            $this->add($label, $link, $args);
+        }
 	}
+
+    /**
+     * Set options
+     * @param array $options
+     */
+    public function setOptions(array $options)
+    {
+        $this->options = $options;
+
+        return $this;
+    }
 
 	/**
 	 * Add breadcrumb
@@ -60,4 +74,9 @@ class Breadcrumb
 
 		return '<ul class="'.$options['class'].'">'.$li.'</ul>';
 	}
+
+    public function __toString()
+    {
+        return $this->render($this->options);
+    }
 }
