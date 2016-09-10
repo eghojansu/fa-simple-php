@@ -27,8 +27,8 @@ class ClearCommand extends Command
         $tables = [
             'user',
         ];
-        $tableToClear = $tables;
         if ($filter = $input->getArgument('table')) {
+            $tableToClear = [];
             foreach (explode(',', $filter) as $table) {
                 if ($found = array_search($table, $tables)) {
                     $tableToClear[] = $table;

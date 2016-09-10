@@ -4,6 +4,8 @@ namespace app\core;
 
 use PDO;
 use Exception;
+use LogicException;
+use RuntimeException;
 
 /**
  * Database
@@ -76,9 +78,34 @@ class Database
      */
     public function import($file)
     {
-        if ($sql = App::instance()->read($file)) {
-            // TODO: split sql to smaller chunks
-            $this->exec($sql);
+        $handle = fopen($file, "rb");
+        if ($handle) {
+            $limit = 2048;
+            $counter = 0;
+            $buffer = '';
+            while (($line = fgets($handle, $limit)) !== false) {
+                if ('--' === substr($line, 0, 2) ||
+                    empty(trim($line))
+                    ) {
+                    continue;
+                }
+
+                $counter += strlen($line);
+                $buffer .= $line;
+
+                if ($counter >= $limit && ';' === substr(rtrim($line), -1, 1)) {
+                    $this->exec($buffer);
+                    $buffer = '';
+                    $counter = 0;
+                }
+            }
+            if (!feof($handle)) {
+                throw new RuntimeException('Unexpected readfile error', 1);
+            }
+            if ($buffer) {
+                $this->exec($buffer);
+            }
+            fclose($handle);
         }
 
         return $this;
@@ -372,7 +399,7 @@ class Database
                     $v = [];
                     foreach ($value as $k) {
                         if (!isset($record[$k])) {
-                            throw new Exception("Column $k was not exists");
+                            throw new LogicException("Column $k was not exists");
                         }
                         $v[$k] = $record[$k];
                     }
@@ -381,7 +408,7 @@ class Database
                 $v = call_user_func_array($value, [$record]);
             } else {
                 if (!isset($record[$value])) {
-                    throw new Exception("Column $k was not exists");
+                    throw new LogicException("Column $k was not exists");
                 }
                 $v = $record[$value];
             }

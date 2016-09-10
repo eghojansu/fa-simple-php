@@ -31,6 +31,8 @@ class SeedCommand extends Command
 
         $this
             ->seed('user', function($b) use ($db) {
+                $affected = 0;
+
                 $db->exec('alter table user auto_increment = 1');
                 for ($i=2; $i < 100; $i++) {
                     $datum = [];
@@ -39,7 +41,7 @@ class SeedCommand extends Command
                     $datum['password'] = $datum['username'];
                     $b->add($datum);
                 }
-                $affected = $b->execute()?$b->count():0;
+                $affected += $b->execute()?$b->count():0;
 
                 return $affected;
             })

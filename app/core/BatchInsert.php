@@ -86,7 +86,7 @@ class BatchInsert
             $info = $query->errorInfo();
             $success = $info[0] === '00000';
 
-            if ($success) {
+            if ($success && $this->data) {
                 $this->queryExecuted++;
                 $next = $this->prepare($this->data);
                 $query = $pdo->prepare($next['sql']);
