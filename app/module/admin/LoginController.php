@@ -2,7 +2,7 @@
 
 namespace app\module\admin;
 
-use app\core\Controller;
+use app\Controller;
 use app\core\Database;
 use app\core\Request;
 use app\core\User;

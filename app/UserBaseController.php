@@ -2,9 +2,7 @@
 
 namespace app;
 
-use app\core\Controller;
-
-class UserController extends Controller
+abstract class UserBaseController extends Controller
 {
     protected $template = 'default';
 

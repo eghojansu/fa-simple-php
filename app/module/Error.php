@@ -8,9 +8,9 @@ class Error extends Controller
 {
     protected $template = 'not-found';
 
-    public function notFound()
+    public function notFound(array $data = [])
     {
-        return $this->render(null, [
+        return $this->render(null, $data + [
                 'title'=>'404 - Halaman tidak ditemukan',
                 'message'=>'Halaman yang anda minta tidak ditemukan!',
             ], [
@@ -18,9 +18,9 @@ class Error extends Controller
             ]);
     }
 
-    public function notAllowed()
+    public function notAllowed(array $data = [])
     {
-        return $this->render(null, [
+        return $this->render(null, $data + [
                 'title'=>'405 - Forbidden',
                 'message'=>'Anda dilarang mengakses halaman ini!',
             ], [

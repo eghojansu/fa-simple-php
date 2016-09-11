@@ -2,8 +2,8 @@
 
 <div class="data-control clearfix">
     <div class="btn-group pull-right" role="group">
-        <a href="<?php echo $this->app->url($printUrl, $_GET); ?>" class="btn btn-info"><i class="fa fa-print"></i> Print</a>
-        <a href="<?php echo $this->app->url($downloadUrl, $_GET); ?>" class="btn btn-warning"><i class="fa fa-download"></i> Download</a>
+        <a href="<?php echo $app->url($printUrl, $_GET); ?>" class="btn btn-info"><i class="fa fa-print"></i> Print</a>
+        <a href="<?php echo $app->url($downloadUrl, $_GET); ?>" class="btn btn-warning"><i class="fa fa-download"></i> Download</a>
     </div>
 
     <form class="form-inline">

@@ -2,13 +2,13 @@
 
 namespace app\module\admin;
 
-use app\AdminController as AdminControllerBase;
+use app\AdminBaseController;
 use app\core\Database;
 use app\core\Helper;
 use app\core\Request;
 use app\core\User;
 
-class AdminController extends AdminControllerBase
+class AdminController extends AdminBaseController
 {
     protected $homeUrl = 'admin';
 

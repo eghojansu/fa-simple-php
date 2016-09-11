@@ -2,20 +2,24 @@
 
 namespace app\module\admin\master;
 
-use app\AdminController;
+use app\AdminBaseController;
 use app\core\Database;
 use app\core\HTML;
 use app\core\Request;
 use app\core\User;
 
-class UserController extends AdminController
+class UserController extends AdminBaseController
 {
     protected $homeUrl = 'admin/master/user';
 
     public function main(User $user, Database $db, Request $request, HTML $html, $page = 1)
     {
+        if (false === is_numeric($page)) {
+            return $this->notFound(['message'=>"Halaman '$page' tidak ditemukan!"]);
+        }
+
         $filter = ['id <> :self', ':self'=>$user->get('id')];
-        if ('' !== ($keyword = $request->query('keyword'))) {
+        if ($keyword = $request->query('keyword')) {
             $filter[0] .= ' and (name like :keyword or username like :keyword)';
             $filter[':keyword'] = '%'.$keyword.'%';
         }

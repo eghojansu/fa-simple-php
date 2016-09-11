@@ -41,7 +41,7 @@
       <div class="form-group">
         <div class="col-md-8 col-md-offset-4">
           <button type="submit" class="btn btn-primary">Update</button>
-          <a href="<?php echo $this->app->url('backUrl'); ?>" class="btn btn-default">Batal</a>
+          <a href="<?php echo $app->url($backUrl); ?>" class="btn btn-default">Batal</a>
         </div>
       </div>
     </form>

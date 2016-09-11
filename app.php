@@ -42,6 +42,7 @@ if ($segments) {
                 array_shift($args);
             }
             else {
+                // lets the default method handle it
                 $method = $defaultMethod;
             }
 
@@ -53,6 +54,12 @@ if ($segments) {
                 $method = 'notAllowed';
             }
             $mref = null;
+
+            // current handler info
+            $app
+                ->set('controller', $class)
+                ->set('method', $method)
+            ;
 
             $segments = [];
         }

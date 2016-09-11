@@ -2,17 +2,21 @@
 
 namespace app\module\admin\laporan;
 
-use app\AdminController;
+use app\AdminBaseController;
 use app\core\Database;
 use app\core\HTML;
 use app\core\Request;
 
-class UserController extends AdminController
+class UserController extends AdminBaseController
 {
     protected $homeUrl = 'admin/laporan/user';
 
     public function main(Database $db, Request $request, HTML $html, $page = 1)
     {
+        if (false === is_numeric($page)) {
+            return $this->notFound(['message'=>"Halaman '$page' tidak ditemukan!"]);
+        }
+
         $filter = [];
         if ($keyword = $request->query('keyword')) {
             $filter = [

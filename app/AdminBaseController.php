@@ -2,9 +2,7 @@
 
 namespace app;
 
-use app\core\Controller;
-
-class AdminController extends Controller
+abstract class AdminBaseController extends Controller
 {
     protected $homeUrl;
     protected $template = 'admin';

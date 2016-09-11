@@ -4,7 +4,7 @@
 
 <div class="data-control clearfix hidden-print">
     <div class="btn-group pull-right" role="group">
-        <a href="<?php echo $this->app->url($homeUrl, $_GET); ?>" class="btn btn-default"><i class="fa fa-reply"></i> Kembali</a>
+        <a href="<?php echo $app->url($homeUrl, $_GET); ?>" class="btn btn-default"><i class="fa fa-reply"></i> Kembali</a>
         <button class="btn btn-info" onclick="window.print()"><i class="fa fa-print"></i> Print</button>
     </div>
 </div>

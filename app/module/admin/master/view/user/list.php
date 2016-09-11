@@ -2,10 +2,10 @@
 
 <div class="data-control clearfix">
     <div class="btn-group pull-right">
-        <a class="btn btn-primary" href="<?php echo $this->app->url($createUrl); ?>" data-toggle="tooltip" title="Data baru"><i class="fa fa-pencil-square-o"></i> Data Baru</a>
+        <a class="btn btn-primary" href="<?php echo $app->url($createUrl); ?>" data-toggle="tooltip" title="Data baru"><i class="fa fa-pencil-square-o"></i> Data Baru</a>
     </div>
 
-    <form class="form-inline" action="<?php echo $this->app->url($homeUrl); ?>">
+    <form class="form-inline" action="<?php echo $app->url($homeUrl); ?>">
         <div class="form-group">
             <label for="keyword" class="sr-only">Keyword</label>
             <input type="text" name="keyword" class="form-control" value="<?php echo $keyword; ?>" placeholder="name or username">
@@ -35,9 +35,9 @@
                     <td><?php echo $row['username']; ?></td>
                     <td><?php echo $row['level']; ?></td>
                     <td>
-                        <a class="btn btn-xs btn-warning" href="<?php echo $this->app->url($detailUrl, ['id'=>$row['id']]); ?>" data-toggle="tooltip" title="Detail"><i class="fa fa-info"></i></a>
-                        <a class="btn btn-xs btn-success" href="<?php echo $this->app->url($updateUrl, ['id'=>$row['id']]); ?>" data-toggle="tooltip" title="Edit"><i class="fa fa-pencil"></i></a>
-                        <a data-confirm="delete" class="btn btn-xs btn-danger" href="<?php echo $this->app->url($deleteUrl, ['id'=>$row['id']]); ?>" data-toggle="tooltip" title="Delete"><i class="fa fa-trash"></i></a>
+                        <a class="btn btn-xs btn-warning" href="<?php echo $app->url($detailUrl, ['id'=>$row['id']]); ?>" data-toggle="tooltip" title="Detail"><i class="fa fa-info"></i></a>
+                        <a class="btn btn-xs btn-success" href="<?php echo $app->url($updateUrl, ['id'=>$row['id']]); ?>" data-toggle="tooltip" title="Edit"><i class="fa fa-pencil"></i></a>
+                        <a data-confirm="delete" class="btn btn-xs btn-danger" href="<?php echo $app->url($deleteUrl, ['id'=>$row['id']]); ?>" data-toggle="tooltip" title="Delete"><i class="fa fa-trash"></i></a>
                     </td>
                 </tr>
             <?php endforeach; ?>

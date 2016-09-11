@@ -2,9 +2,9 @@
 
 namespace app\module;
 
-use app\UserController;
+use app\UserBaseController;
 
-class IndexController extends UserController
+class IndexController extends UserBaseController
 {
     public function main()
     {

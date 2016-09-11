@@ -6,7 +6,7 @@
 <table class="table">
     <tbody>
         <tr>
-            <td colspan="3"><a href="<?php echo $this->app->url($homeUrl); ?>" data-toggle="tooltip" title="Kembali">&laquo;</a></td>
+            <td colspan="3"><a href="<?php echo $app->url($homeUrl); ?>" data-toggle="tooltip" title="Kembali">&laquo;</a></td>
         </tr>
         <tr>
             <td style="width: 200px">Name</td>

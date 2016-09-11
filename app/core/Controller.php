@@ -79,6 +79,7 @@ class Controller
         $pageTitle = $this->app->get('pageTitle')?:$this->app->get('name');
         $currentPath = $this->app->get('currentPath')?:$this->request->currentPath();
         extract($_data);
+        $app = $this->app;
         $_content = null;
 
         if ($_view) {
