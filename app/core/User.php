@@ -8,6 +8,7 @@ namespace app\core;
 class User extends Magic
 {
     protected $data;
+    protected $rolePointer;
 
     public function __construct()
     {
@@ -17,6 +18,43 @@ class User extends Magic
             $_SESSION[$key] = [];
         }
         $this->data =& $_SESSION[$key];
+        $this->rolePointer = $this->rolePointer?:$this->get('lastRole');
+    }
+
+    /**
+     * Get user data
+     * @param  string|null $role
+     * @return array
+     */
+    public function data($role = null)
+    {
+        $login = $this->get('login')?:[];
+        $role = false === $role? null: ($role ?: $this->rolePointer);
+        if ($role) {
+            if (isset($login[$role])) {
+                $data = [];
+            }
+            else {
+                $data = $login[$role];
+            }
+        }
+        else {
+            $data = $login;
+        }
+
+        return $data;
+    }
+
+    /**
+     * Set Role
+     * @param string $role
+     * @return  object $this
+     */
+    public function setRolePointer($role)
+    {
+        $this->rolePointer = $role;
+
+        return $this;
     }
 
     /**
@@ -26,11 +64,12 @@ class User extends Magic
      */
     public function login($role, array $data)
     {
-        $this->set('login', true);
-        $this->set('role', $role);
-        foreach ($data as $key => $value) {
-            $this->set($key, $value);
+        if (!isset($this->data['login'])) {
+            $this->data['login'] = [];
         }
+        $this->data['login'][$role] = $data;
+        $this->data['lastRole'] = $role;
+        $this->rolePointer = $role;
 
         return $this;
     }
@@ -38,9 +77,10 @@ class User extends Magic
     /**
      * logout user
      */
-    public function logout()
+    public function logout($role = null)
     {
-        $this->data = [];
+        $role = false === $role? null: ($role ?: $this->rolePointer);
+        unset($this->data['login'][$role]);
 
         return $this;
     }
@@ -69,7 +109,7 @@ class User extends Magic
      */
     public function hasBeenLogin()
     {
-        return $this->get('login');
+        return !empty($this->data['login']);
     }
 
     /**
@@ -88,9 +128,8 @@ class User extends Magic
      */
     public function is($role)
     {
-        $currentRole = $this->get('role');
         $roles = is_array($role) ? $role : explode(',', $role);
-        $currentRoles = is_array($currentRole) ? $currentRole : explode(',', $currentRole);
+        $currentRoles = isset($this->data['login']) ? array_keys($this->data['login']) : [];
         $intersection = array_intersect($roles, $currentRoles);
 
         return !empty($intersection);
@@ -109,6 +148,12 @@ class User extends Magic
 
     protected function &getPool()
     {
+        if ($this->rolePointer && isset($this->data['login']) && isset($this->data['login'][$this->rolePointer])) {
+            $data =& $this->data['login'][$this->rolePointer];
+
+            return $data;
+        }
+
         return $this->data;
     }
 }

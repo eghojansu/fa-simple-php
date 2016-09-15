@@ -11,6 +11,7 @@ use RuntimeException;
  * Database
  *
  * Easy access to perform CRUD operation on database
+ * Built for mysql/mariadb
  */
 class Database
 {
@@ -44,6 +45,23 @@ class Database
             'password' => 'root',
             'options'  => [],
         ], $config);
+    }
+
+    /**
+     * Get database size in mb
+     * @return int
+     */
+    public function size()
+    {
+        $sql = <<<SQL
+select round(sum(data_length + index_length) / 1024 / 1024, 1) "size_mb"
+from information_schema.tables where table_schema = :db
+SQL;
+        $query = $this->execute($sql, [
+            ':db'=>$this->config['dsn']['dbname']
+            ]);
+
+        return $query->fetch(PDO::FETCH_OBJ)->size_mb;
     }
 
     /**
@@ -109,6 +127,18 @@ class Database
         }
 
         return $this;
+    }
+
+    /**
+     * Quote
+     * @param  string $field
+     * @return string quoted field
+     */
+    public function quote($field)
+    {
+        $quoted = "`$field`";
+
+        return $quoted;
     }
 
     /**
@@ -398,7 +428,7 @@ class Database
                 } else {
                     $v = [];
                     foreach ($value as $k) {
-                        if (!isset($record[$k])) {
+                        if (!array_key_exists($k, $record)) {
                             throw new LogicException("Column $k was not exists");
                         }
                         $v[$k] = $record[$k];
@@ -407,8 +437,8 @@ class Database
             } elseif (is_callable($value)) {
                 $v = call_user_func_array($value, [$record]);
             } else {
-                if (!isset($record[$value])) {
-                    throw new LogicException("Column $k was not exists");
+                if (!array_key_exists($value, $record)) {
+                    throw new LogicException("Column $value was not exists");
                 }
                 $v = $record[$value];
             }
