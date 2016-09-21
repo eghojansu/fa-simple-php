@@ -186,7 +186,7 @@ class Validation
      */
     public function _required($value)
     {
-        $passed = $value !== '';
+        $passed = !($value === '' || $value === null);
 
         return (bool) $passed;
     }
@@ -317,11 +317,11 @@ class Validation
             }
 
             foreach ($fields as $field) {
-                if (!isset($this->data[$field]) || in_array($field, $this->skips)) {
+                if (in_array($field, $this->skips)) {
                     continue;
                 }
 
-                $value = $this->data[$field];
+                $value = isset($this->data[$field])?$this->data[$field]:null;
                 if ($ruleToCheck) {
                     $params = [$value,$param,$field];
                     $result = call_user_func_array([$this, $ruleToCheck], $params);
