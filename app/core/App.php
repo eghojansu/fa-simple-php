@@ -12,7 +12,7 @@ use ReflectionMethod;
 class App extends Magic
 {
     const PACKAGE = 'eghojansu/fa-simple-php';
-    const VERSION = '2.4.1';
+    const VERSION = '2.4.2';
 
     protected $data = [
         // hold output
